@@ -9,13 +9,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.android.runvolution.utils.FragmentFactory;
+
 public class MainActivity extends AppCompatActivity {
 
     public static final String TAG_ACTIVITY =
             MainActivity.class.getSimpleName();
-    public static final String TAG_FRAGMENT_HOME = "home";
-    public static final String TAG_FRAGMENT_HISTORY = "history";
-    public static final String TAG_FRAGMENT_STATUS = "status";
 
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
@@ -43,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 case R.id.navigation_history:
                     mTextMessage.setText("");
-                    loadHistoryFragment();
+                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
@@ -52,6 +51,23 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
+
+    private void loadFragment(String fragmentTag) {
+        Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
+
+        if (fragment == null) {
+            fragment = FragmentFactory.createFragment(fragmentTag);
+            fragmentManager
+                    .beginTransaction()
+                    .add(R.id.container, fragment, fragmentTag)
+                    .commit();
+        } else {
+            fragmentManager
+                    .beginTransaction()
+                    .attach(fragment)
+                    .commit();
+        }
+    }
 
     private void loadHistoryFragment() {
         Fragment historyFragment = fragmentManager.findFragmentByTag("history");
