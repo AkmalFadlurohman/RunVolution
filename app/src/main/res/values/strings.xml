@@ -7,5 +7,8 @@
     <string name="history_blank_fragment">History blank fragment</string>
     <string name="home_blank_fragment">Home blank fragment</string>
     <string name="status_blank_fragment">Status blank fragment</string>
+    <string name="steps">Steps: </string>
+    <string name="date">Date: </string>
+    <string name="distance">Distance: </string>
 
 </resources>

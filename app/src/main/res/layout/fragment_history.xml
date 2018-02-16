@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context="com.example.android.runvolution.HistoryFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/historyView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/history_blank_fragment" />
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>
