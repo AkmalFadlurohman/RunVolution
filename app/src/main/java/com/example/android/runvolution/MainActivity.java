@@ -11,6 +11,12 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String TAG_ACTIVITY =
+            MainActivity.class.getSimpleName();
+    public static final String TAG_FRAGMENT_HOME = "home";
+    public static final String TAG_FRAGMENT_HISTORY = "history";
+    public static final String TAG_FRAGMENT_STATUS = "status";
+
     private TextView mTextMessage;
     private FragmentManager fragmentManager;
 
@@ -35,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
                     return true;
-                case R.id.navigation_dashboard:
+                case R.id.navigation_history:
                     mTextMessage.setText("");
                     loadHistoryFragment();
                     return true;
