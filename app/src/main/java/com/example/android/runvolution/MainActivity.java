@@ -19,7 +19,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG_ACTIVITY =
             MainActivity.class.getSimpleName();
 
-    private TextView mTextMessage;
     private FragmentManager fragmentManager;
 
     @Override
@@ -29,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
 
-        mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -43,15 +41,12 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText("");
                     loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
                     return true;
                 case R.id.navigation_history:
-                    mTextMessage.setText("");
                     loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText("");
                     loadFragment(FragmentFactory.TAG_FRAGMENT_STATUS);
                     return true;
             }
