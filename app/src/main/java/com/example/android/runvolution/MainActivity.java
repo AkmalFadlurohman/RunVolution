@@ -5,11 +5,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.example.android.runvolution.utils.FragmentFactory;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,20 +60,23 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private void loadFragment(String fragmentTag) {
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        for (Fragment fr : fragmentManager.getFragments()) {
+            if (!fr.getTag().equals(fragmentTag)) {
+                fragmentTransaction.detach(fr);
+            }
+        }
+
         Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
 
         if (fragment == null) {
             fragment = FragmentFactory.createFragment(fragmentTag);
-            fragmentManager
-                    .beginTransaction()
-                    .add(R.id.container, fragment, fragmentTag)
-                    .commit();
+            fragmentTransaction.add(R.id.container, fragment, fragmentTag);
         } else {
-            fragmentManager
-                    .beginTransaction()
-                    .attach(fragment)
-                    .commit();
+            fragmentTransaction.attach(fragment);
         }
+
+        fragmentTransaction.commit();
     }
 
 }
