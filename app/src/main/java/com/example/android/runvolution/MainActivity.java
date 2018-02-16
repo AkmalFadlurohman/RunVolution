@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -38,14 +40,16 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
+                    mTextMessage.setText("");
+                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
                     return true;
                 case R.id.navigation_history:
                     mTextMessage.setText("");
                     loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
+                    mTextMessage.setText("");
+                    loadFragment(FragmentFactory.TAG_FRAGMENT_STATUS);
                     return true;
             }
             return false;
@@ -69,20 +73,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void loadHistoryFragment() {
-        Fragment historyFragment = fragmentManager.findFragmentByTag("history");
-
-        if (historyFragment == null) {
-            historyFragment = new HistoryFragment();
-            fragmentManager
-                    .beginTransaction()
-                    .add(R.id.container, historyFragment, "history")
-                    .commit();
-        } else {
-            fragmentManager
-                    .beginTransaction()
-                    .attach(historyFragment)
-                    .commit();
-        }
-    }
 }
