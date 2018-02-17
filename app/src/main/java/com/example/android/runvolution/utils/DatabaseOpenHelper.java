@@ -2,8 +2,10 @@ package com.example.android.runvolution.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.android.runvolution.history.HistoryItem;
 
@@ -33,7 +35,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
             HISTORY_COLUMN_DISTANCE
     };
     private static final String HISTORY_TABLE_CREATE =
-            "CREATE TABLE " + HISTORY_TABLE_TABLENAME + " (" +
+            "CREATE TABLE " + HISTORY_TABLE_TABLENAME + " ( " +
                     HISTORY_COLUMN_ID + " INTEGER PRIMARY KEY, " +
                     HISTORY_COLUMN_DATE + " INTEGER, " +
                     HISTORY_COLUMN_STEPS + " INTEGER, " +
@@ -67,6 +69,43 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.w(TAG, "Upgrading database from version " + oldVersion +
+                " to " + newVersion + ", which will destroy all old data.");
+        db.execSQL("DROP TABLE IF EXISTS " + HISTORY_TABLE_TABLENAME);
+        onCreate(db);
+    }
 
+    public HistoryItem query(int position) {
+        String query = " SELECT * FROM " + HISTORY_TABLE_TABLENAME +
+                " ORDER BY " + HISTORY_COLUMN_DATE + " ASC " +
+                "LIMIT " + position + ", 1";
+
+        HistoryItem entry = new HistoryItem();
+
+        if (mReadableDB == null) {
+            mReadableDB = getReadableDatabase();
+        }
+        try (Cursor cursor = mReadableDB.rawQuery(query, null)) {
+            cursor.moveToFirst();
+            entry = getHistoryItemFromCursor(cursor);
+        } catch (Exception e) {
+            Log.d(TAG, "query: " + e.getMessage());
+        }
+
+        return entry;
+    }
+
+    private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
+        HistoryItem entry = new HistoryItem();
+        int idIdx = cursor.getColumnIndex(HISTORY_COLUMN_ID);
+        int dateIdx = cursor.getColumnIndex(HISTORY_COLUMN_DATE);
+        int stepsIdx = cursor.getColumnIndex(HISTORY_COLUMN_STEPS);
+        int distanceIdx = cursor.getColumnIndex(HISTORY_COLUMN_DISTANCE);
+
+        entry.setId(cursor.getInt(idIdx));
+        entry.setDate(new Date(cursor.getLong(dateIdx)));
+        entry.setSteps(cursor.getInt(stepsIdx));
+        entry.setDistance(cursor.getFloat(distanceIdx));
+        return entry;
     }
 }
