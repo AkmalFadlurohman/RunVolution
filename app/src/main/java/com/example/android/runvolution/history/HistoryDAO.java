@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.example.android.runvolution.utils.DatabaseAccessObject;
 import com.example.android.runvolution.utils.DatabaseOpenHelper;
+import com.example.android.runvolution.utils.DatabaseUpdateListener;
 
 import java.util.Date;
 
@@ -22,7 +23,7 @@ import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_T
  */
 
 public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
-    public static final String TAG = HistoryDAO.class.getSimpleName();
+    private static final String TAG = HistoryDAO.class.getSimpleName();
     private static final String HISTORY_TABLE = HISTORY_TABLE_TABLENAME;
     private static final String COLUMN_ID = HISTORY_COLUMN_ID;
     private static final String COLUMN_DATE = HISTORY_COLUMN_DATE;
@@ -32,9 +33,20 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
     private DatabaseOpenHelper mDB;
     private SQLiteDatabase mReadableDB;
     private SQLiteDatabase mWritableDB;
+    private DatabaseUpdateListener mListener;
 
     public HistoryDAO(DatabaseOpenHelper mDB) {
         this.mDB = mDB;
+        mListener = new HistoryStatistics(this);
+    }
+
+    public HistoryDAO(DatabaseOpenHelper mDB, DatabaseUpdateListener mListener) {
+        this.mDB = mDB;
+        this.mListener = mListener;
+    }
+
+    public void setListener(DatabaseUpdateListener mListener) {
+        this.mListener = mListener;
     }
 
     @Override
@@ -45,7 +57,7 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
 
         HistoryItem entry = new HistoryItem();
 
-        mReadableDB = mDB.getReadableDatabase();
+        mReadableDB = mDB.getReadableDB();
         try (Cursor cursor = mReadableDB.rawQuery(query, null)) {
             cursor.moveToFirst();
             entry = getHistoryItemFromCursor(cursor);
@@ -61,13 +73,14 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
         long newId = 0;
         ContentValues values = historyItemToContentValues(item);
 
-        mWritableDB = mDB.getWritableDatabase();
+        mWritableDB = mDB.getWritableDB();
         try {
             newId = mWritableDB.insert(HISTORY_TABLE, null, values);
         } catch (Exception e) {
             Log.d(TAG, "insert: " + e.getMessage());
         }
 
+        mListener.onDatabaseUpdate();
         return newId;
     }
 
@@ -75,7 +88,7 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
     public int delete(int id) {
         int deleted = 0;
 
-        mWritableDB = mDB.getWritableDatabase();
+        mWritableDB = mDB.getWritableDB();
         try {
             String whereClause = COLUMN_ID + " = ? ";
             String[] whereArgs = new String[]{String.valueOf(id)};
@@ -84,13 +97,14 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
             Log.d(TAG, "delete: " + e.getMessage());
         }
 
+        mListener.onDatabaseUpdate();
         return deleted;
     }
 
     @Override
     public int update(HistoryItem item) {
         int mNumberOfRowsUpdated = -1;
-        mWritableDB = mDB.getWritableDatabase();
+        mWritableDB = mDB.getWritableDB();
         try {
             ContentValues values = historyItemToContentValues(item);
             String whereClause = COLUMN_ID + " = ? ";
@@ -103,12 +117,13 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
             Log.d(TAG, "update: " + e.getMessage());
         }
 
+        mListener.onDatabaseUpdate();
         return mNumberOfRowsUpdated;
     }
 
     @Override
     public long getQueryCount() {
-        mReadableDB = mDB.getReadableDatabase();
+        mReadableDB = mDB.getReadableDB();
         return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE);
     }
 

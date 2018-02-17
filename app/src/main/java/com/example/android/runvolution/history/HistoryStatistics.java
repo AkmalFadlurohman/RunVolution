@@ -1,13 +1,18 @@
 package com.example.android.runvolution.history;
 
+import android.util.Log;
+
 import com.example.android.runvolution.utils.DatabaseAccessObject;
 import com.example.android.runvolution.utils.DatabaseOpenHelper;
+import com.example.android.runvolution.utils.DatabaseUpdateListener;
 
 /**
  * Created by iqbal on 17/02/18.
  */
 
-public class HistoryStatistics {
+public class HistoryStatistics implements DatabaseUpdateListener {
+    public static final String TAG = HistoryStatistics.class.getSimpleName();
+
     private int avgSteps;
     private float avgDistance;
 
@@ -43,5 +48,11 @@ public class HistoryStatistics {
             distanceSum += historyDAO.query(i).getDistance();
         }
         avgDistance = distanceSum / historyCount;
+    }
+
+    @Override
+    public void onDatabaseUpdate() {
+        updateAvgDistance();
+        updateAvgSteps();
     }
 }
