@@ -29,14 +29,12 @@ public class HistoryFragment extends Fragment {
     private RecyclerView.Adapter historyViewAdapter;
     private DatabaseOpenHelper dbHelper;
 
-    private List<HistoryItem> historyItems = new ArrayList<>();
-
     public HistoryFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dbHelper = new DatabaseOpenHelper(getContext());
 
@@ -51,15 +49,6 @@ public class HistoryFragment extends Fragment {
         historyView = (RecyclerView) getView().findViewById(R.id.historyView);
         historyView.setHasFixedSize(true);
         historyView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        // TODO: Replace harcoded list with fetch from server.
-        for (int i = 0; i < 100; i++) {
-            HistoryItem item = new HistoryItem(i,
-                    new Date(),
-                    (i*100),
-                    0);
-            historyItems.add(item);
-        }
 
         historyViewAdapter = new HistoryAdapter(getContext(), dbHelper);
         historyView.setAdapter(historyViewAdapter);

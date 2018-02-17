@@ -24,7 +24,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "runvolution_db";
 
     /* History Table */
-    private static final String HISTORY_TABLE_TABLENAME = "history";
+    public static final String HISTORY_TABLE_TABLENAME = "history";
     public static final String HISTORY_COLUMN_ID = "_id";
     public static final String HISTORY_COLUMN_DATE = "date";
     public static final String HISTORY_COLUMN_STEPS = "steps";
@@ -47,6 +47,20 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
 
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public SQLiteDatabase getWritableDB() {
+        if (mWritableDB == null) {
+            mWritableDB = getWritableDatabase();
+        }
+        return mWritableDB;
+    }
+
+    public SQLiteDatabase getReadableDB() {
+        if (mReadableDB == null) {
+            mReadableDB = getReadableDatabase();
+        }
+        return mReadableDB;
     }
 
     @Override
@@ -77,85 +91,85 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public long getHistoryCount() {
-        if (mReadableDB == null) {
-            mReadableDB = getReadableDatabase();
-        }
-        return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE_TABLENAME);
-    }
+//    public long getHistoryCount() {
+//        if (mReadableDB == null) {
+//            mReadableDB = getReadableDatabase();
+//        }
+//        return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE_TABLENAME);
+//    }
+//
+//    public HistoryItem query(int position) {
+//        String query = " SELECT * FROM " + HISTORY_TABLE_TABLENAME +
+//                " ORDER BY " + HISTORY_COLUMN_DATE + " ASC " +
+//                "LIMIT " + position + ", 1";
+//
+//        HistoryItem entry = new HistoryItem();
+//
+//        if (mReadableDB == null) {
+//            mReadableDB = getReadableDatabase();
+//        }
+//        try (Cursor cursor = mReadableDB.rawQuery(query, null)) {
+//            cursor.moveToFirst();
+//            entry = getHistoryItemFromCursor(cursor);
+//        } catch (Exception e) {
+//            Log.d(TAG, "query: " + e.getMessage());
+//        }
+//
+//        return entry;
+//    }
+//
+//    public long insert(HistoryItem entry) {
+//        long newId = 0;
+//        ContentValues values = historyItemToContentValues(entry);
+//
+//        if (mWritableDB == null) {
+//            mWritableDB = getWritableDatabase();
+//        }
+//        try {
+//            newId = mWritableDB.insert(HISTORY_TABLE_TABLENAME, null, values);
+//        } catch (Exception e) {
+//            Log.d(TAG, "insert: " + e.getMessage());
+//        }
+//
+//        return newId;
+//    }
+//
+//    public int delete(int id) {
+//        int deleted = 0;
+//
+//        if (mWritableDB == null) {
+//            mWritableDB = getWritableDatabase();
+//        }
+//        try {
+//            String whereClause = HISTORY_COLUMN_ID + " = ? ";
+//            String[] whereArgs = new String[]{String.valueOf(id)};
+//            deleted = mWritableDB.delete(HISTORY_TABLE_TABLENAME, whereClause, whereArgs);
+//        } catch (Exception e) {
+//            Log.d(TAG, "delete: " + e.getMessage());
+//        }
+//
+//        return deleted;
+//    }
 
-    public HistoryItem query(int position) {
-        String query = " SELECT * FROM " + HISTORY_TABLE_TABLENAME +
-                " ORDER BY " + HISTORY_COLUMN_DATE + " ASC " +
-                "LIMIT " + position + ", 1";
-
-        HistoryItem entry = new HistoryItem();
-
-        if (mReadableDB == null) {
-            mReadableDB = getReadableDatabase();
-        }
-        try (Cursor cursor = mReadableDB.rawQuery(query, null)) {
-            cursor.moveToFirst();
-            entry = getHistoryItemFromCursor(cursor);
-        } catch (Exception e) {
-            Log.d(TAG, "query: " + e.getMessage());
-        }
-
-        return entry;
-    }
-
-    public long insert(HistoryItem entry) {
-        long newId = 0;
-        ContentValues values = historyItemToContentValues(entry);
-
-        if (mWritableDB == null) {
-            mWritableDB = getWritableDatabase();
-        }
-        try {
-            newId = mWritableDB.insert(HISTORY_TABLE_TABLENAME, null, values);
-        } catch (Exception e) {
-            Log.d(TAG, "insert: " + e.getMessage());
-        }
-
-        return newId;
-    }
-
-    public int delete(int id) {
-        int deleted = 0;
-
-        if (mWritableDB == null) {
-            mWritableDB = getWritableDatabase();
-        }
-        try {
-            String whereClause = HISTORY_COLUMN_ID + " = ? ";
-            String[] whereArgs = new String[]{String.valueOf(id)};
-            deleted = mWritableDB.delete(HISTORY_TABLE_TABLENAME, whereClause, whereArgs);
-        } catch (Exception e) {
-            Log.d(TAG, "delete: " + e.getMessage());
-        }
-
-        return deleted;
-    }
-
-    private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
-        HistoryItem entry = new HistoryItem();
-        int idIdx = cursor.getColumnIndex(HISTORY_COLUMN_ID);
-        int dateIdx = cursor.getColumnIndex(HISTORY_COLUMN_DATE);
-        int stepsIdx = cursor.getColumnIndex(HISTORY_COLUMN_STEPS);
-        int distanceIdx = cursor.getColumnIndex(HISTORY_COLUMN_DISTANCE);
-
-        entry.setId(cursor.getInt(idIdx));
-        entry.setDate(new Date(cursor.getLong(dateIdx)));
-        entry.setSteps(cursor.getInt(stepsIdx));
-        entry.setDistance(cursor.getFloat(distanceIdx));
-        return entry;
-    }
-
-    private ContentValues historyItemToContentValues(HistoryItem entry) {
-        ContentValues values = new ContentValues();
-        values.put(HISTORY_COLUMN_DATE, entry.getDate().getTime());
-        values.put(HISTORY_COLUMN_STEPS, entry.getSteps());
-        values.put(HISTORY_COLUMN_DISTANCE, entry.getDistance());
-        return values;
-    }
+//    private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
+//        HistoryItem entry = new HistoryItem();
+//        int idIdx = cursor.getColumnIndex(HISTORY_COLUMN_ID);
+//        int dateIdx = cursor.getColumnIndex(HISTORY_COLUMN_DATE);
+//        int stepsIdx = cursor.getColumnIndex(HISTORY_COLUMN_STEPS);
+//        int distanceIdx = cursor.getColumnIndex(HISTORY_COLUMN_DISTANCE);
+//
+//        entry.setId(cursor.getInt(idIdx));
+//        entry.setDate(new Date(cursor.getLong(dateIdx)));
+//        entry.setSteps(cursor.getInt(stepsIdx));
+//        entry.setDistance(cursor.getFloat(distanceIdx));
+//        return entry;
+//    }
+//
+//    private ContentValues historyItemToContentValues(HistoryItem entry) {
+//        ContentValues values = new ContentValues();
+//        values.put(HISTORY_COLUMN_DATE, entry.getDate().getTime());
+//        values.put(HISTORY_COLUMN_STEPS, entry.getSteps());
+//        values.put(HISTORY_COLUMN_DISTANCE, entry.getDistance());
+//        return values;
+//    }
 }

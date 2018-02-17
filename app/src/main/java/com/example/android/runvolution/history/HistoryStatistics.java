@@ -1,5 +1,6 @@
 package com.example.android.runvolution.history;
 
+import com.example.android.runvolution.utils.DatabaseAccessObject;
 import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
 /**
@@ -10,10 +11,10 @@ public class HistoryStatistics {
     private int avgSteps;
     private float avgDistance;
 
-    private DatabaseOpenHelper mDB;
+    private HistoryDAO historyDAO;
 
-    public HistoryStatistics(DatabaseOpenHelper mDB) {
-        this.mDB = mDB;
+    public HistoryStatistics(HistoryDAO historyDAO) {
+        this.historyDAO = historyDAO;
     }
 
     public int getAvgSteps() {
@@ -22,10 +23,10 @@ public class HistoryStatistics {
     }
 
     private void updateAvgSteps() {
-        long historyCount = mDB.getHistoryCount();
+        long historyCount = historyDAO.getQueryCount();
         long stepSum = 0;
         for (int i = 0; i < historyCount; i++) {
-            stepSum += mDB.query(i).getSteps();
+            stepSum += historyDAO.query(i).getSteps();
         }
         avgSteps = (int) (stepSum / historyCount);
     }
@@ -36,10 +37,10 @@ public class HistoryStatistics {
     }
 
     private void updateAvgDistance() {
-        long historyCount = mDB.getHistoryCount();
+        long historyCount = historyDAO.getQueryCount();
         float distanceSum = 0;
         for (int i = 0; i < historyCount; i++) {
-            distanceSum += mDB.query(i).getDistance();
+            distanceSum += historyDAO.query(i).getDistance();
         }
         avgDistance = distanceSum / historyCount;
     }

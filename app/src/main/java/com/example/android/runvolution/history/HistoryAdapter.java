@@ -8,11 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.runvolution.MainActivity;
 import com.example.android.runvolution.R;
+import com.example.android.runvolution.utils.DatabaseAccessObject;
 import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
-import java.io.DataOutput;
 import java.util.List;
 
 /**
@@ -22,7 +21,8 @@ import java.util.List;
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     private List<HistoryItem> historyItems;
-    private DatabaseOpenHelper dbHelper;
+//    private DatabaseOpenHelper historyDAO;
+    private HistoryDAO historyDAO;
     private Context context;
 
     public HistoryAdapter(List<HistoryItem> historyItems, Context context) {
@@ -32,7 +32,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     public HistoryAdapter(Context context, DatabaseOpenHelper db) {
         this.context = context;
-        this.dbHelper = db;
+        this.historyDAO = new HistoryDAO(db);
     }
 
     @Override
@@ -45,10 +45,10 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         HistoryItem currentItem;
-        if (dbHelper == null) {
+        if (historyDAO == null) {
             currentItem = historyItems.get(position);
         } else {
-            currentItem = dbHelper.query(position);
+            currentItem = historyDAO.query(position);
         }
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
@@ -61,10 +61,10 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        if (dbHelper == null) {
+        if (historyDAO == null) {
             return historyItems.size();
         } else {
-            return (int) dbHelper.getHistoryCount();
+            return (int) historyDAO.getQueryCount();
         }
     }
 
