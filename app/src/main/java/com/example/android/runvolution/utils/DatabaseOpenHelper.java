@@ -120,6 +120,23 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return newId;
     }
 
+    public int delete(int id) {
+        int deleted = 0;
+
+        if (mWritableDB == null) {
+            mWritableDB = getWritableDatabase();
+        }
+        try {
+            String whereClause = HISTORY_COLUMN_ID + " = ? ";
+            String[] whereArgs = new String[]{String.valueOf(id)};
+            deleted = mWritableDB.delete(HISTORY_TABLE_TABLENAME, whereClause, whereArgs);
+        } catch (Exception e) {
+            Log.d(TAG, "delete: " + e.getMessage());
+        }
+
+        return deleted;
+    }
+
     private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
         HistoryItem entry = new HistoryItem();
         int idIdx = cursor.getColumnIndex(HISTORY_COLUMN_ID);
