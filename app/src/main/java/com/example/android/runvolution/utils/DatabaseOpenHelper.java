@@ -77,6 +77,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    public long getHistoryCount() {
+        if (mReadableDB == null) {
+            mReadableDB = getReadableDatabase();
+        }
+        return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE_TABLENAME);
+    }
+
     public HistoryItem query(int position) {
         String query = " SELECT * FROM " + HISTORY_TABLE_TABLENAME +
                 " ORDER BY " + HISTORY_COLUMN_DATE + " ASC " +
@@ -97,11 +104,20 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         return entry;
     }
 
-    public long getHistoryCount() {
-        if (mReadableDB == null) {
-            mReadableDB = getReadableDatabase();
+    public long insert(HistoryItem entry) {
+        long newId = 0;
+        ContentValues values = historyItemToContentValues(entry);
+
+        if (mWritableDB == null) {
+            mWritableDB = getWritableDatabase();
         }
-        return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE_TABLENAME);
+        try {
+            newId = mWritableDB.insert(HISTORY_TABLE_TABLENAME, null, values);
+        } catch (Exception e) {
+            Log.d(TAG, "insert: " + e.getMessage());
+        }
+
+        return newId;
     }
 
     private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
@@ -116,5 +132,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         entry.setSteps(cursor.getInt(stepsIdx));
         entry.setDistance(cursor.getFloat(distanceIdx));
         return entry;
+    }
+
+    private ContentValues historyItemToContentValues(HistoryItem entry) {
+        ContentValues values = new ContentValues();
+        values.put(HISTORY_COLUMN_DATE, entry.getDate().getTime());
+        values.put(HISTORY_COLUMN_STEPS, entry.getSteps());
+        values.put(HISTORY_COLUMN_DISTANCE, entry.getDistance());
+        return values;
     }
 }
