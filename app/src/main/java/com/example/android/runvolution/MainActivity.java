@@ -7,18 +7,23 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.example.android.runvolution.utils.DatabaseOpenHelper;
 import com.example.android.runvolution.utils.FragmentFactory;
 
-import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final String TAG_ACTIVITY =
+    public static final String TAG =
             MainActivity.class.getSimpleName();
+    public static final String TAB_HOME = FragmentFactory.TAG_FRAGMENT_HOME;
+    public static final String TAB_HISTORY = FragmentFactory.TAG_FRAGMENT_HISTORY;
+    public static final String TAB_STATUS = FragmentFactory.TAG_FRAGMENT_STATUS;
+    public static final String[] TABS = {
+            TAB_HOME, TAB_HISTORY, TAB_STATUS
+    };
 
     private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
@@ -34,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         fragmentManager = getSupportFragmentManager();
-        loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+        loadFragment(TAB_HOME);
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -44,13 +49,13 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+                    loadFragment(TAB_HOME);
                     return true;
                 case R.id.navigation_history:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
+                    loadFragment(TAB_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_STATUS);
+                    loadFragment(TAB_STATUS);
                     return true;
             }
             return false;

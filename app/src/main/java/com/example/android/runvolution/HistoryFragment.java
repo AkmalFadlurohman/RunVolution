@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.android.runvolution.history.HistoryAdapter;
 import com.example.android.runvolution.history.HistoryItem;
+import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,6 +27,7 @@ public class HistoryFragment extends Fragment {
 
     private RecyclerView historyView;
     private RecyclerView.Adapter historyViewAdapter;
+    private DatabaseOpenHelper dbHelper;
 
     private List<HistoryItem> historyItems = new ArrayList<>();
 
@@ -36,6 +38,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        dbHelper = new DatabaseOpenHelper(getContext());
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_history, container, false);
     }
@@ -57,7 +61,7 @@ public class HistoryFragment extends Fragment {
             historyItems.add(item);
         }
 
-        historyViewAdapter = new HistoryAdapter(historyItems, getContext());
+        historyViewAdapter = new HistoryAdapter(getContext(), dbHelper);
         historyView.setAdapter(historyViewAdapter);
     }
 }

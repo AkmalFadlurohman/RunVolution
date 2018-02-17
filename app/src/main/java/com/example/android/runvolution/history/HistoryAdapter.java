@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import com.example.android.runvolution.MainActivity;
 import com.example.android.runvolution.R;
+import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
+import java.io.DataOutput;
 import java.util.List;
 
 /**
@@ -20,11 +22,17 @@ import java.util.List;
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     private List<HistoryItem> historyItems;
+    private DatabaseOpenHelper dbHelper;
     private Context context;
 
     public HistoryAdapter(List<HistoryItem> historyItems, Context context) {
         this.historyItems = historyItems;
         this.context = context;
+    }
+
+    public HistoryAdapter(Context context, DatabaseOpenHelper db) {
+        this.context = context;
+        this.dbHelper = db;
     }
 
     @Override
@@ -36,7 +44,12 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        HistoryItem currentItem = historyItems.get(position);
+        HistoryItem currentItem;
+        if (dbHelper == null) {
+            currentItem = historyItems.get(position);
+        } else {
+            currentItem = dbHelper.query(position);
+        }
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());
@@ -48,7 +61,11 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return historyItems.size();
+        if (dbHelper == null) {
+            return historyItems.size();
+        } else {
+            return (int) dbHelper.getHistoryCount();
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{

@@ -3,6 +3,7 @@ package com.example.android.runvolution.utils;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -41,12 +42,12 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
                     HISTORY_COLUMN_STEPS + " INTEGER, " +
                     HISTORY_COLUMN_DISTANCE + " INTEGER )";
 
+    private SQLiteDatabase mWritableDB;
+    private SQLiteDatabase mReadableDB;
+
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
-    private SQLiteDatabase mWritableDB;
-    private SQLiteDatabase mReadableDB;
 
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -55,6 +56,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         fillDatabaseWithData(db);
     }
 
+    // TODO: Remove this hardcoded data later.
     private void fillDatabaseWithData(SQLiteDatabase db) {
         ContentValues values = new ContentValues();
 
@@ -93,6 +95,13 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
         }
 
         return entry;
+    }
+
+    public long getHistoryCount() {
+        if (mReadableDB == null) {
+            mReadableDB = getReadableDatabase();
+        }
+        return DatabaseUtils.queryNumEntries(mReadableDB, HISTORY_TABLE_TABLENAME);
     }
 
     private HistoryItem getHistoryItemFromCursor(Cursor cursor) {
