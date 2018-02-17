@@ -20,15 +20,8 @@ import java.util.List;
 
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
-    private List<HistoryItem> historyItems;
-//    private DatabaseOpenHelper historyDAO;
     private HistoryDAO historyDAO;
     private Context context;
-
-    public HistoryAdapter(List<HistoryItem> historyItems, Context context) {
-        this.historyItems = historyItems;
-        this.context = context;
-    }
 
     public HistoryAdapter(Context context, DatabaseOpenHelper db) {
         this.context = context;
@@ -45,11 +38,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         HistoryItem currentItem;
-        if (historyDAO == null) {
-            currentItem = historyItems.get(position);
-        } else {
-            currentItem = historyDAO.query(position);
-        }
+        currentItem = historyDAO.query(position);
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());
@@ -61,11 +50,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        if (historyDAO == null) {
-            return historyItems.size();
-        } else {
-            return (int) historyDAO.getQueryCount();
-        }
+        return (int) historyDAO.getQueryCount();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
