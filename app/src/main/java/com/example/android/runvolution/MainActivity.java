@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.android.runvolution.utils.DatabaseOpenHelper;
 import com.example.android.runvolution.utils.FragmentFactory;
 
 import java.util.Objects;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG_ACTIVITY =
             MainActivity.class.getSimpleName();
 
+    private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
 
     @Override
@@ -26,11 +28,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fragmentManager = getSupportFragmentManager();
+        dbHelper = new DatabaseOpenHelper(this);
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
+        fragmentManager = getSupportFragmentManager();
         loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
     }
 
