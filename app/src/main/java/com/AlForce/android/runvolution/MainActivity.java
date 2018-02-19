@@ -1,4 +1,4 @@
-package com.example.android.runvolution;
+package com.AlForce.android.runvolution;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
