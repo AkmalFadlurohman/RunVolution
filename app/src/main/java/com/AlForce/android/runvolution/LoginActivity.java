@@ -3,8 +3,11 @@ package com.AlForce.android.runvolution;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,39 +28,20 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.tasks.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+public class LoginActivity extends AppCompatActivity {
 
-
-
-public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
-
-    //private UserLoginTask authTask = null;
+    private UserLoginTask authTask = null;
     private EditText emailView;
     private EditText passwordView;
     private View progressView;
     private View loginFormView;
-    private GoogleSignInClient googleSignInClient;
-    private static int RC_SIGN_IN = 49404;
     private String LOG_TAG = LoginActivity.class.getSimpleName();
 
     @Override
@@ -77,42 +61,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 return false;
             }
         });
-        SignInButton signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setSize(SignInButton.SIZE_STANDARD);
+        Button signInButton = findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(LOG_TAG, "Tapped sign in");
-                //attemptLogin();
-                Intent signInIntent = googleSignInClient.getSignInIntent();
-                startActivityForResult(signInIntent, RC_SIGN_IN);
-
+                NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
+                if (networkInfo != null && networkInfo.isConnected()) {
+                    attemptLogin();
+                } else {
+                    Toast.makeText(LoginActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         loginFormView = findViewById(R.id.login_form);
         progressView = findViewById(R.id.login_progress);
 
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().requestServerAuthCode("829683283830-1k0kokad688iovbdtkul6tcvttqs50nc.apps.googleusercontent.com").build();
-        googleSignInClient = GoogleSignIn.getClient(this, gso);
-    }
-
-    protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        super.onActivityResult(requestCode, responseCode, intent);
-        Log.d(LOG_TAG, "ActivityResult: " + requestCode);
-
-        if (requestCode == RC_SIGN_IN) {
-            //showProgress(false);
-            //GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(intent);
-            //handleSignInResult(result);
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(intent);
-            handleSignInResult(task);
-        }
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(LOG_TAG, "onConnectionFailed:" + connectionResult);
     }
 
     private void attemptLogin() {
@@ -124,14 +89,14 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
+        // Check for a valid password, if the user entered one
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             passwordView.setError(getString(R.string.error_invalid_password));
             focusView = passwordView;
             cancel = true;
         }
 
-        // Check for a valid email address.
+        // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
             emailView.setError(getString(R.string.error_field_required));
             focusView = emailView;
@@ -145,11 +110,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (cancel) {
             focusView.requestFocus();
         } else {
-            //showProgress(true);
-            Intent signInIntent = googleSignInClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_SIGN_IN);
-            //authTask = new UserLoginTask(email, password);
-            //authTask.execute((Void) null);
+            showProgress(true);
+            authTask = new UserLoginTask(email, password);
+            authTask.execute((Void) null);
         }
     }
 
@@ -159,17 +122,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
-    }
-
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
-        try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Toast.makeText(this,"Hello, " + account.getDisplayName(), Toast.LENGTH_SHORT).show();
-            //startActivity(new Intent(this, MainActivity.class));
-        } catch (ApiException e) {
-            Log.d(LOG_TAG, "signInResult:failed code=" + e.getStatusCode());
-            Toast.makeText(this,"An error occured when signing in your account", Toast.LENGTH_SHORT).show();
-        }
     }
 
     /**
@@ -203,11 +155,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    /*public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public void getRegister(View view) {
+        Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT);
+    }
+
+    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String email;
         private final String password;
@@ -226,13 +178,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
+            /*for (String credential : DUMMY_CREDENTIALS) {
                 String[] pieces = credential.split(":");
                 if (pieces[0].equals(email)) {
                     // Account exists, return true if the password matches.
                     return pieces[1].equals(password);
                 }
-            }
+            }*/
 
             return true;
         }
@@ -255,10 +207,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             authTask = null;
             showProgress(false);
         }
-    }*/
-
-
-
-
+    }
 }
 

@@ -18,4 +18,12 @@
         completions."
     </string>
     <string name="prompt_register"><u>Don\'t have an account?</u></string>
+    
+    <string name="title_history">History</string>
+    <string name="history_blank_fragment">History blank fragment</string>
+    <string name="home_blank_fragment">Home blank fragment</string>
+    <string name="status_blank_fragment">Status blank fragment</string>
+    <string name="steps">Steps:\u0020</string>
+    <string name="date">Date:\u0020</string>
+    <string name="distance">Distance:\u0020</string>
 </resources>
