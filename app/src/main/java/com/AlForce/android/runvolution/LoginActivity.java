@@ -37,6 +37,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import javax.net.ssl.HttpsURLConnection;
+
 public class LoginActivity extends AppCompatActivity {
 
     private UserLoginTask authTask = null;
@@ -118,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid password, if the user entered one
+        // Check for a valid password
         if (TextUtils.isEmpty(password)) {
             passwordView.setError(getString(R.string.error_field_required));
             focusView = passwordView;
@@ -194,22 +203,55 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
+            String address = "https://runvolution.herokuapp.com/login";
+            HttpsURLConnection httpsPost = null;
+            BufferedReader buffer = null;
+            String msg = null;
+
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                URL urlAddress = new URL(address);
+                httpsPost = (HttpsURLConnection) urlAddress.openConnection();
+                httpsPost.setRequestMethod("POST");
+                httpsPost.setDoOutput(true);
+                DataOutputStream writer = new DataOutputStream(httpsPost.getOutputStream());
+                writer.writeBytes("email=" + email + "&password=" + password);
+                writer.flush();
+                writer.close();
+                buffer = new BufferedReader(new InputStreamReader(httpsPost.getInputStream()));
+                String inputLine;
+                StringBuilder res = new StringBuilder();
+                int respCode = httpsPost.getResponseCode();
+                while ((inputLine = buffer.readLine()) != null) {
+                    res.append(inputLine);
+                }
+                msg = res.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                if (httpsPost != null) {
+                    httpsPost.disconnect();
+                }
+                if (buffer != null) {
+                    try {
+                        buffer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if  (msg == null) {
+                    Log.d("The server responded with : ", "Message is null");
+                } else {
+                    Log.d("The server responded with : ", msg);
+                }
+
+            }
+            if (msg != null) {
+                return "OK".equals(msg);
+            } else {
                 return false;
             }
 
-            /*for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(email)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(password);
-                }
-            }*/
-
-            return true;
         }
 
         @Override
@@ -218,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                finish();
+                Toast.makeText(LoginActivity.this, "Succesfully logged in",Toast.LENGTH_SHORT).show();
             } else {
                 passwordView.setError(getString(R.string.error_incorrect_password));
                 passwordView.requestFocus();
