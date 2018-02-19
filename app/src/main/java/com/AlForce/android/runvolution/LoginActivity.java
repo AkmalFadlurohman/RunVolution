@@ -3,6 +3,7 @@ package com.AlForce.android.runvolution;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -61,6 +63,22 @@ public class LoginActivity extends AppCompatActivity {
                 return false;
             }
         });
+        emailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+        passwordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
         Button signInButton = findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -89,13 +107,6 @@ public class LoginActivity extends AppCompatActivity {
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            passwordView.setError(getString(R.string.error_invalid_password));
-            focusView = passwordView;
-            cancel = true;
-        }
-
         // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
             emailView.setError(getString(R.string.error_field_required));
@@ -104,6 +115,17 @@ public class LoginActivity extends AppCompatActivity {
         } else if (!isEmailValid(email)) {
             emailView.setError(getString(R.string.error_invalid_email));
             focusView = emailView;
+            cancel = true;
+        }
+
+        // Check for a valid password, if the user entered one
+        if (TextUtils.isEmpty(password)) {
+            passwordView.setError(getString(R.string.error_field_required));
+            focusView = passwordView;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
+            passwordView.setError(getString(R.string.error_invalid_password));
+            focusView = passwordView;
             cancel = true;
         }
 
@@ -156,7 +178,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void getRegister(View view) {
-        Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT);
+        Log.d(LOG_TAG,"Tapped dont have account string");
+        Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT).show();
     }
 
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
@@ -207,6 +230,11 @@ public class LoginActivity extends AppCompatActivity {
             authTask = null;
             showProgress(false);
         }
+    }
+
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 }
 
