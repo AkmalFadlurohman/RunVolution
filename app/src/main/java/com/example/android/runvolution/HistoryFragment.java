@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.android.runvolution.history.HistoryAdapter;
 import com.example.android.runvolution.history.HistoryItem;
+import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,16 +27,17 @@ public class HistoryFragment extends Fragment {
 
     private RecyclerView historyView;
     private RecyclerView.Adapter historyViewAdapter;
-
-    private List<HistoryItem> historyItems = new ArrayList<>();
+    private DatabaseOpenHelper dbHelper;
 
     public HistoryFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        dbHelper = new DatabaseOpenHelper(getContext());
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_history, container, false);
     }
@@ -48,16 +50,7 @@ public class HistoryFragment extends Fragment {
         historyView.setHasFixedSize(true);
         historyView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // TODO: Replace harcoded list with fetch from server.
-        for (int i = 0; i < 100; i++) {
-            HistoryItem item = new HistoryItem(i,
-                    new Date(),
-                    (i*100),
-                    0);
-            historyItems.add(item);
-        }
-
-        historyViewAdapter = new HistoryAdapter(historyItems, getContext());
+        historyViewAdapter = new HistoryAdapter(getContext(), dbHelper);
         historyView.setAdapter(historyViewAdapter);
     }
 }

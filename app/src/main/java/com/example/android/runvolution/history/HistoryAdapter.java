@@ -8,8 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.runvolution.MainActivity;
 import com.example.android.runvolution.R;
+import com.example.android.runvolution.utils.DatabaseAccessObject;
+import com.example.android.runvolution.utils.DatabaseOpenHelper;
 
 import java.util.List;
 
@@ -19,12 +20,14 @@ import java.util.List;
 
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
-    private List<HistoryItem> historyItems;
+    private HistoryDAO historyDAO;
+    private HistoryStatistics statistics;
     private Context context;
 
-    public HistoryAdapter(List<HistoryItem> historyItems, Context context) {
-        this.historyItems = historyItems;
+    public HistoryAdapter(Context context, DatabaseOpenHelper db) {
         this.context = context;
+        this.historyDAO = new HistoryDAO(db);
+        this.statistics = new HistoryStatistics(historyDAO);
     }
 
     @Override
@@ -36,7 +39,8 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        HistoryItem currentItem = historyItems.get(position);
+        HistoryItem currentItem;
+        currentItem = historyDAO.query(position);
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());
@@ -48,7 +52,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return historyItems.size();
+        return (int) historyDAO.getQueryCount();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
