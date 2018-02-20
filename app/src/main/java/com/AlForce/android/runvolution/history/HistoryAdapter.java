@@ -7,7 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
+import com.AlForce.android.runvolution.history.HistoryItem;
+import com.AlForce.android.runvolution.R;
+import java.util.List;
 import com.AlForce.android.runvolution.R;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 
