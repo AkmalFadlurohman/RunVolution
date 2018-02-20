@@ -87,6 +87,7 @@
                 android:layout_marginTop="10dp"
                 android:text="@string/prompt_register"
                 android:clickable="true"
+                android:focusable="false"
                 android:onClick="launchRegister"/>
 
         </LinearLayout>

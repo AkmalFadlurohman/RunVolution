@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -100,7 +102,7 @@ public class RegisterActivity extends AppCompatActivity {
                 if (networkInfo != null && networkInfo.isConnected()) {
                     attemptRegister();
                 } else {
-                    Toast.makeText(LoginActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -109,6 +111,84 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void attemptRegister() {
+        nameView.setError(null);
+        emailView.setError(null);
+        passwordView.setError(null);
+        confirmPasswordView.setError(null);
+        String name = nameView.getText().toString();
+        String email = emailView.getText().toString();
+        String password = passwordView.getText().toString();
+        String confirmPassword = confirmPasswordView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid name
+        if (TextUtils.isEmpty(name)) {
+            nameView.setError(getString(R.string.error_field_required));
+            focusView = nameView;
+            cancel = true;
+        } else if (!isNameValid(name)) {
+            nameView.setError(getString(R.string.error_invalid_name));
+            focusView = nameView;
+            cancel = true;
+        }
+
+        // Check for a valid email address
+        if (TextUtils.isEmpty(email)) {
+            emailView.setError(getString(R.string.error_field_required));
+            focusView = emailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            emailView.setError(getString(R.string.error_invalid_email));
+            focusView = emailView;
+            cancel = true;
+        }
+
+        // Check for a valid password
+        if (TextUtils.isEmpty(password)) {
+            passwordView.setError(getString(R.string.error_field_required));
+            focusView = passwordView;
+            cancel = true;
+        } else if (!isPasswordValid(password)) {
+            passwordView.setError(getString(R.string.error_invalid_password));
+            focusView = passwordView;
+            cancel = true;
+        }
+
+        // Check for a valid confirm password
+        if (TextUtils.isEmpty(confirmPassword)) {
+            confirmPasswordView.setError(getString(R.string.error_field_required));
+            focusView = confirmPasswordView;
+            cancel = true;
+        } else if (!isPasswordValid(confirmPassword)) {
+            confirmPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = confirmPasswordView;
+            cancel = true;
+        } else if (! confirmPassword.equals(password)) {
+            confirmPasswordView.setError(getString(R.string.error_password_did_not_match));
+            focusView = confirmPasswordView;
+            cancel = true;
+        }
+
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
+            showProgress(true);
+            regTask = new UserRegisterTask(name, email, password);
+            regTask.execute((Void) null);
+        }
+    }
+    private boolean isNameValid(String name) {
+        return !name.matches(".*\\d+.*");
+    }
+
+    private boolean isEmailValid(String email) {
+        return email.contains("@");
+    }
+
+    private boolean isPasswordValid(String password) {
+        return password.length() > 4;
     }
 
     public void hideKeyboard(View view) {
@@ -149,7 +229,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void launchLogin(View view) {
         Log.d(LOG_TAG,"Tapped already have account string");
-        Toast.makeText(this,"Login with your account", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Login with your account", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 
     public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
@@ -168,7 +249,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String address = "https://runvolution.herokuapp.com/login";
+            String address = "https://runvolution.herokuapp.com/register";
             HttpsURLConnection httpsPost = null;
             BufferedReader buffer = null;
             String msg = null;
@@ -179,7 +260,7 @@ public class RegisterActivity extends AppCompatActivity {
                 httpsPost.setRequestMethod("POST");
                 httpsPost.setDoOutput(true);
                 DataOutputStream writer = new DataOutputStream(httpsPost.getOutputStream());
-                writer.writeBytes("email=" + email + "&password=" + password);
+                writer.writeBytes("name=" + name + "&email=" + email + "&password=" + password);
                 writer.flush();
                 writer.close();
                 buffer = new BufferedReader(new InputStreamReader(httpsPost.getInputStream()));
@@ -225,14 +306,15 @@ public class RegisterActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                //Toast.makeText(LoginActivity.this, "Succesfully logged in",Toast.LENGTH_SHORT).show();
                 SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("logged",true);
                 editor.putString("email",email);
                 editor.putString("password",password);
                 editor.apply();
-                new LoginActivity.UserDataLoader(email).execute((Void) null);
+                Toast.makeText(RegisterActivity.this, "Registration Success",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                //new LoginActivity.UserDataLoader(email).execute((Void) null);
                 //startActivity(new Intent(LoginActivity.this, MainActivity.class));
             } else {
                 passwordView.setError(getString(R.string.error_incorrect_password));

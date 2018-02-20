@@ -118,8 +118,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="@string/prompt_register"
+                android:text="@string/prompt_login"
                 android:clickable="true"
+                android:focusable="false"
                 android:onClick="launchLogin"/>
 
         </LinearLayout>
