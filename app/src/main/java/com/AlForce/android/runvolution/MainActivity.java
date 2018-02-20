@@ -1,4 +1,4 @@
-package com.example.android.runvolution;
+package com.AlForce.android.runvolution;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -10,12 +10,11 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 
-import com.example.android.runvolution.sensor.ShakeDetector;
-import com.example.android.runvolution.utils.DatabaseOpenHelper;
-import com.example.android.runvolution.utils.FragmentFactory;
+import com.AlForce.android.runvolution.sensor.ShakeDetector;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
+import com.AlForce.android.runvolution.utils.FragmentFactory;
 
 
 public class MainActivity extends AppCompatActivity {

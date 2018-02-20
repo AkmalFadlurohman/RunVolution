@@ -1,14 +1,10 @@
-package com.example.android.runvolution.utils;
+package com.AlForce.android.runvolution.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import com.example.android.runvolution.history.HistoryItem;
 
 import java.util.Date;
 

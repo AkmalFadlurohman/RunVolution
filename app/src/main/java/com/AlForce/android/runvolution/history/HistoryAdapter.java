@@ -1,4 +1,4 @@
-package com.example.android.runvolution.history;
+package com.AlForce.android.runvolution.history;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,11 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.runvolution.R;
-import com.example.android.runvolution.utils.DatabaseAccessObject;
-import com.example.android.runvolution.utils.DatabaseOpenHelper;
-
-import java.util.List;
+import com.AlForce.android.runvolution.R;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 
 /**
  * Created by iqbal on 16/02/18.

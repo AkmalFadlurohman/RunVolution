@@ -1,4 +1,4 @@
-package com.example.android.runvolution.sensor;
+package com.AlForce.android.runvolution.sensor;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;

@@ -1,10 +1,6 @@
-package com.example.android.runvolution.history;
+package com.AlForce.android.runvolution.history;
 
-import android.util.Log;
-
-import com.example.android.runvolution.utils.DatabaseAccessObject;
-import com.example.android.runvolution.utils.DatabaseOpenHelper;
-import com.example.android.runvolution.utils.DatabaseUpdateListener;
+import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
 
 /**
  * Created by iqbal on 17/02/18.

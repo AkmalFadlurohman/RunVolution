@@ -1,4 +1,4 @@
-package com.example.android.runvolution;
+package com.AlForce.android.runvolution;
 
 
 import android.os.Bundle;
@@ -11,13 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.android.runvolution.history.HistoryAdapter;
-import com.example.android.runvolution.history.HistoryItem;
-import com.example.android.runvolution.utils.DatabaseOpenHelper;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.AlForce.android.runvolution.history.HistoryAdapter;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 
 
 /**

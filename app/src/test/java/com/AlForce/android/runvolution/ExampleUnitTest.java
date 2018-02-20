@@ -1,4 +1,4 @@
-package com.example.android.runvolution;
+package com.AlForce.android.runvolution;
 
 import org.junit.Test;
 

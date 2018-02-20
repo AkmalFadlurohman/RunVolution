@@ -1,4 +1,4 @@
-package com.example.android.runvolution.history;
+package com.AlForce.android.runvolution.history;
 
 import java.util.Date;
 

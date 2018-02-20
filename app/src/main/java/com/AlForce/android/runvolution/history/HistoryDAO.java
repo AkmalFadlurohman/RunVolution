@@ -1,4 +1,4 @@
-package com.example.android.runvolution.history;
+package com.AlForce.android.runvolution.history;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -6,17 +6,17 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.example.android.runvolution.utils.DatabaseAccessObject;
-import com.example.android.runvolution.utils.DatabaseOpenHelper;
-import com.example.android.runvolution.utils.DatabaseUpdateListener;
+import com.AlForce.android.runvolution.utils.DatabaseAccessObject;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
+import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
 
 import java.util.Date;
 
-import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_DATE;
-import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_DISTANCE;
-import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_ID;
-import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_STEPS;
-import static com.example.android.runvolution.utils.DatabaseOpenHelper.HISTORY_TABLE_TABLENAME;
+import static com.AlForce.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_DATE;
+import static com.AlForce.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_DISTANCE;
+import static com.AlForce.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_ID;
+import static com.AlForce.android.runvolution.utils.DatabaseOpenHelper.HISTORY_COLUMN_STEPS;
+import static com.AlForce.android.runvolution.utils.DatabaseOpenHelper.HISTORY_TABLE_TABLENAME;
 
 /**
  * Created by iqbal on 17/02/18.
