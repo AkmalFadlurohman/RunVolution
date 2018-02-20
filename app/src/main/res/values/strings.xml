@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">RunVolution</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">Incorrect email or password</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="prompt_register"><u>Don\'t have an account?</u></string>
+
+    <string name="title_history">History</string>
+    <string name="history_blank_fragment">History blank fragment</string>
+    <string name="home_blank_fragment">Home blank fragment</string>
+    <string name="status_blank_fragment">Status blank fragment</string>
+    <string name="steps">Steps:\u0020</string>
+    <string name="date">Date:\u0020</string>
+    <string name="distance">Distance:\u0020</string>
+    <string name="sharedpref_file">com.AlForce.android.runvolution.PREFERENCE</string>
+    <string name="action_register">Sign Up</string>
+    <string name="prompt_name">Fullname</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_register_short">Sign Up</string>
+    <string name="error_invalid_name">Name can not contains number</string>
+    <string name="error_password_did_not_match">Passwords did not match</string>
+    <string name="prompt_login">Already have an account?</string>
+    <string name="title_pet">Pet</string>
+</resources>
