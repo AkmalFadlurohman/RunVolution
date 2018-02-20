@@ -1,5 +1,6 @@
 package com.AlForce.android.runvolution.utils;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.AlForce.android.runvolution.HistoryFragment;
@@ -13,16 +14,18 @@ public class FragmentFactory {
 
     public static final String TAG_FRAGMENT_HOME = "home";
     public static final String TAG_FRAGMENT_HISTORY = "history";
-    public static final String TAG_FRAGMENT_STATUS = "status";
+    public static final String TAG_FRAGMENT_PET = "pet";
 
-    public static Fragment createFragment(String fragmentTag) {
+    public static Fragment createFragment(String fragmentTag, Bundle data) {
         switch (fragmentTag) {
             case TAG_FRAGMENT_HISTORY:
                 return new HistoryFragment();
             case TAG_FRAGMENT_HOME:
                 return new HomeFragment();
-            case TAG_FRAGMENT_STATUS:
-                return new PetStatusFragment();
+            case TAG_FRAGMENT_PET:
+                PetStatusFragment petStatusFragment = new PetStatusFragment();
+                petStatusFragment.setArguments(data);
+                return petStatusFragment;
         }
 
         return new Fragment();
