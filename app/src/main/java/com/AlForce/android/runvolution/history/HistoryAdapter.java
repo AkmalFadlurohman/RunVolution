@@ -7,10 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import com.AlForce.android.runvolution.history.HistoryItem;
 import com.AlForce.android.runvolution.R;
 import java.util.List;
+import com.AlForce.android.runvolution.R;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 
 /**
  * Created by iqbal on 16/02/18.
@@ -18,12 +19,14 @@ import java.util.List;
 
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
-    private List<com.AlForce.android.runvolution.history.HistoryItem> historyItems;
+    private HistoryDAO historyDAO;
+    private HistoryStatistics statistics;
     private Context context;
 
-    public HistoryAdapter(List<com.AlForce.android.runvolution.history.HistoryItem> historyItems, Context context) {
-        this.historyItems = historyItems;
+    public HistoryAdapter(Context context, DatabaseOpenHelper db) {
         this.context = context;
+        this.historyDAO = new HistoryDAO(db);
+        this.statistics = new HistoryStatistics(historyDAO);
     }
 
     @Override
@@ -35,7 +38,8 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        com.AlForce.android.runvolution.history.HistoryItem currentItem = historyItems.get(position);
+        HistoryItem currentItem;
+        currentItem = historyDAO.query(position);
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());
@@ -47,7 +51,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return historyItems.size();
+        return (int) historyDAO.getQueryCount();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder{
