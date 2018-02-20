@@ -191,7 +191,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void getRegister(View view) {
+    public void launchRegister(View view) {
         Log.d(LOG_TAG,"Tapped dont have account string");
         Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT).show();
     }
