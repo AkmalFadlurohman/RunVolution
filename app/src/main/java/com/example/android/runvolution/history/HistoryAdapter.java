@@ -21,11 +21,13 @@ import java.util.List;
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     private HistoryDAO historyDAO;
+    private HistoryStatistics statistics;
     private Context context;
 
     public HistoryAdapter(Context context, DatabaseOpenHelper db) {
         this.context = context;
         this.historyDAO = new HistoryDAO(db);
+        this.statistics = new HistoryStatistics(historyDAO);
     }
 
     @Override

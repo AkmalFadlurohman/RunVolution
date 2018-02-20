@@ -37,7 +37,6 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
 
     public HistoryDAO(DatabaseOpenHelper mDB) {
         this.mDB = mDB;
-        mListener = new HistoryStatistics(this);
     }
 
     public HistoryDAO(DatabaseOpenHelper mDB, DatabaseUpdateListener mListener) {

@@ -20,6 +20,7 @@ public class HistoryStatistics implements DatabaseUpdateListener {
 
     public HistoryStatistics(HistoryDAO historyDAO) {
         this.historyDAO = historyDAO;
+        this.historyDAO.setListener(this);
     }
 
     public int getAvgSteps() {
