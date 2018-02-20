@@ -28,4 +28,7 @@
     <string name="distance">Distance:\u0020</string>
     <string name="sharedpref_file">com.AlForce.android.runvolution.PREFERENCE</string>
     <string name="action_register">Sign Up</string>
+    <string name="prompt_name">Fullname</string>
+    <string name="prompt_confirm_password">Confirm Password</string>
+    <string name="action_register_short">Sign Up</string>
 </resources>

@@ -193,7 +193,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void launchRegister(View view) {
         Log.d(LOG_TAG,"Tapped dont have account string");
-        Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this,RegisterActivity.class));
     }
 
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {

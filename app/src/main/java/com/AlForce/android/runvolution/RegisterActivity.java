@@ -38,7 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText passwordView;
     private EditText confirmPasswordView;
     private View progressView;
-    private View loginFormView;
+    private View registerFormView;
     private String LOG_TAG = RegisterActivity.class.getSimpleName();
 
     @Override
@@ -104,6 +104,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
+        registerFormView = findViewById(R.id.register_form);
+        progressView = findViewById(R.id.register_progress);
     }
 
     private void attemptRegister() {
@@ -122,12 +124,12 @@ public class RegisterActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            loginFormView.animate().setDuration(shortAnimTime).alpha(
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -141,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
             });
         } else {
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
