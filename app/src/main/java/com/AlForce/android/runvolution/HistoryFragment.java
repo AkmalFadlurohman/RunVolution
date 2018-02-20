@@ -1,4 +1,4 @@
-package com.example.android.runvolution;
+package com.AlForce.android.runvolution;
 
 
 import android.os.Bundle;
@@ -11,9 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.AlForce.android.runvolution.R;
-import com.example.android.runvolution.history.HistoryAdapter;
-import com.example.android.runvolution.history.HistoryItem;
+import com.AlForce.android.runvolution.history.HistoryItem;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,7 +57,7 @@ public class HistoryFragment extends Fragment {
             historyItems.add(item);
         }
 
-        historyViewAdapter = new HistoryAdapter(historyItems, getContext());
+        historyViewAdapter = new com.AlForce.android.runvolution.history.HistoryAdapter(historyItems, getContext());
         historyView.setAdapter(historyViewAdapter);
     }
 }

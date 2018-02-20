@@ -1,4 +1,4 @@
-package com.example.android.runvolution.history;
+package com.AlForce.android.runvolution.history;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.AlForce.android.runvolution.history.HistoryItem;
 import com.AlForce.android.runvolution.R;
 import java.util.List;
 
@@ -17,10 +18,10 @@ import java.util.List;
 
 public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
-    private List<HistoryItem> historyItems;
+    private List<com.AlForce.android.runvolution.history.HistoryItem> historyItems;
     private Context context;
 
-    public HistoryAdapter(List<HistoryItem> historyItems, Context context) {
+    public HistoryAdapter(List<com.AlForce.android.runvolution.history.HistoryItem> historyItems, Context context) {
         this.historyItems = historyItems;
         this.context = context;
     }
@@ -34,7 +35,7 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        HistoryItem currentItem = historyItems.get(position);
+        com.AlForce.android.runvolution.history.HistoryItem currentItem = historyItems.get(position);
 
         String date = context.getString(R.string.date) + currentItem.getDate().toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());

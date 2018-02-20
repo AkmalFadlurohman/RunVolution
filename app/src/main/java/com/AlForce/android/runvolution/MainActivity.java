@@ -8,11 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import com.example.android.runvolution.utils.FragmentFactory;
-
-import java.util.Objects;
+import com.AlForce.android.runvolution.utils.FragmentFactory;
 
 public class MainActivity extends AppCompatActivity {
 

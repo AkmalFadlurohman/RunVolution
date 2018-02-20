@@ -1,11 +1,10 @@
-package com.example.android.runvolution.utils;
+package com.AlForce.android.runvolution.utils;
 
 import android.support.v4.app.Fragment;
 
-import com.example.android.runvolution.HistoryFragment;
-import com.example.android.runvolution.HomeFragment;
-import com.example.android.runvolution.PetStatusFragment;
-
+import com.AlForce.android.runvolution.HistoryFragment;
+import com.AlForce.android.runvolution.HomeFragment;
+import com.AlForce.android.runvolution.PetStatusFragment;
 /**
  * Created by iqbal on 16/02/18.
  */
