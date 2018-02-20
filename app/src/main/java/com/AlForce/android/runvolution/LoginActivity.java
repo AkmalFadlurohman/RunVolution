@@ -39,12 +39,15 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -270,7 +273,8 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("email",email);
                 editor.putString("password",password);
                 editor.apply();
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                new UserDataLoader(email).execute((Void) null);
+                //startActivity(new Intent(LoginActivity.this, MainActivity.class));
             } else {
                 passwordView.setError(getString(R.string.error_incorrect_password));
                 passwordView.requestFocus();
@@ -281,6 +285,117 @@ public class LoginActivity extends AppCompatActivity {
         protected void onCancelled() {
             authTask = null;
             showProgress(false);
+        }
+    }
+
+    public class UserDataLoader extends AsyncTask<Void, Void, ArrayList<String>> {
+        @NonNull private final String email;
+
+        UserDataLoader(String email) {
+            this.email = email;
+        }
+
+        @Override
+        protected ArrayList<String> doInBackground(Void... params) {
+            ArrayList<String> jsonData = new ArrayList<String>();
+            String address = "https://runvolution.herokuapp.com/fetchuser";
+            String param = "?email=" + email;
+            HttpsURLConnection httpsGet = null;
+            BufferedReader reader = null;
+            String msg = null;
+
+            try {
+                URL urlAddress = new URL(address + param);
+                httpsGet = (HttpsURLConnection) urlAddress.openConnection();
+                httpsGet.setRequestMethod("GET");
+                httpsGet.connect();
+                reader = new BufferedReader(new InputStreamReader(httpsGet.getInputStream()));
+                String inputLine;
+                StringBuilder buffer = new StringBuilder();
+                int respCode = httpsGet.getResponseCode();
+                while ((inputLine = reader.readLine()) != null) {
+                    buffer.append(inputLine);
+                }
+                msg = buffer.toString();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            } finally {
+                if (httpsGet != null) {
+                    httpsGet.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (msg == null) {
+                    Log.d("The server responded with : ", "Message is null");
+                } else {
+                    Log.d("The server responded with : ", msg);
+                }
+
+            }
+            jsonData.add(msg);
+            int petId = 0;
+            try {
+                JSONObject rawAccountData = new JSONObject(msg);
+                petId = rawAccountData.getInt("pet_id");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (petId != 0) {
+                address = "https://runvolution.herokuapp.com/fetchpet";
+                param = "?petid=" + petId;
+                httpsGet = null;
+                reader = null;
+                msg = null;
+
+                try {
+                    URL urlAddress = new URL(address + param);
+                    httpsGet = (HttpsURLConnection) urlAddress.openConnection();
+                    httpsGet.setRequestMethod("GET");
+                    httpsGet.connect();
+                    reader = new BufferedReader(new InputStreamReader(httpsGet.getInputStream()));
+                    String inputLine;
+                    StringBuilder buffer = new StringBuilder();
+                    int respCode = httpsGet.getResponseCode();
+                    while ((inputLine = reader.readLine()) != null) {
+                        buffer.append(inputLine);
+                    }
+                    msg = buffer.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                } finally {
+                    if (httpsGet != null) {
+                        httpsGet.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if  (msg == null) {
+                        Log.d("The server responded with : ", "Message is null");
+                    } else {
+                        Log.d("The server responded with : ", msg);
+                    }
+                }
+                jsonData.add(msg);
+            }
+            return jsonData;
+        }
+        @Override
+        protected void onPostExecute(final ArrayList<String> jsonData) {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            intent.putExtra("userData",jsonData.get(0));
+            intent.putExtra("petData",jsonData.get(1));
+            startActivity(intent);
         }
     }
 

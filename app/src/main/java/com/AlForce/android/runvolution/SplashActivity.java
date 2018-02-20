@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import javax.net.ssl.HttpsURLConnection;
 
 public class SplashActivity extends AppCompatActivity {
-    private UserDataLoader loadTask = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,16 +148,10 @@ public class SplashActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(final ArrayList<String> jsonData) {
-            loadTask = null;
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             intent.putExtra("userData",jsonData.get(0));
             intent.putExtra("petData",jsonData.get(1));
             startActivity(intent);
-        }
-
-        @Override
-        protected void onCancelled() {
-            loadTask = null;
         }
     }
 
