@@ -30,6 +30,10 @@ public class HistoryFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public DatabaseOpenHelper getDbHelper() {
+        return dbHelper;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
