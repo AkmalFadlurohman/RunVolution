@@ -7,29 +7,17 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
-
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -37,44 +25,48 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.ConnectionResult;
-
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class LoginActivity extends AppCompatActivity {
-
-    private UserLoginTask authTask = null;
+public class RegisterActivity extends AppCompatActivity {
+    private UserRegisterTask regTask = null;
+    private EditText nameView;
     private EditText emailView;
     private EditText passwordView;
+    private EditText confirmPasswordView;
     private View progressView;
-    private View loginFormView;
-    private String LOG_TAG = LoginActivity.class.getSimpleName();
+    private View registerFormView;
+    private String LOG_TAG = RegisterActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        // Set up the login form.
+        setContentView(R.layout.activity_register);
+        nameView = (EditText) findViewById(R.id.name);
         emailView = (EditText) findViewById(R.id.email);
         passwordView = (EditText) findViewById(R.id.password);
-        passwordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        confirmPasswordView = (EditText) findViewById(R.id.confirm_password);
+        confirmPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    attemptRegister();
                     return true;
                 }
                 return false;
+            }
+        });
+        nameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
             }
         });
         emailView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -93,33 +85,54 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        Button signInButton = findViewById(R.id.sign_in_button);
-        signInButton.setOnClickListener(new OnClickListener() {
+        confirmPasswordView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    hideKeyboard(v);
+                }
+            }
+        });
+        Button registerButton = findViewById(R.id.register_button);
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Log.d(LOG_TAG, "Tapped sign in");
                 NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
-                    attemptLogin();
+                    attemptRegister();
                 } else {
-                    Toast.makeText(LoginActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        loginFormView = findViewById(R.id.login_form);
-        progressView = findViewById(R.id.login_progress);
-
+        registerFormView = findViewById(R.id.register_form);
+        progressView = findViewById(R.id.register_progress);
     }
 
-    private void attemptLogin() {
+    private void attemptRegister() {
+        nameView.setError(null);
         emailView.setError(null);
         passwordView.setError(null);
+        confirmPasswordView.setError(null);
+        String name = nameView.getText().toString();
         String email = emailView.getText().toString();
         String password = passwordView.getText().toString();
+        String confirmPassword = confirmPasswordView.getText().toString();
 
         boolean cancel = false;
         View focusView = null;
+
+        // Check for a valid name
+        if (TextUtils.isEmpty(name)) {
+            nameView.setError(getString(R.string.error_field_required));
+            focusView = nameView;
+            cancel = true;
+        } else if (!isNameValid(name)) {
+            nameView.setError(getString(R.string.error_invalid_name));
+            focusView = nameView;
+            cancel = true;
+        }
 
         // Check for a valid email address
         if (TextUtils.isEmpty(email)) {
@@ -143,13 +156,31 @@ public class LoginActivity extends AppCompatActivity {
             cancel = true;
         }
 
+        // Check for a valid confirm password
+        if (TextUtils.isEmpty(confirmPassword)) {
+            confirmPasswordView.setError(getString(R.string.error_field_required));
+            focusView = confirmPasswordView;
+            cancel = true;
+        } else if (!isPasswordValid(confirmPassword)) {
+            confirmPasswordView.setError(getString(R.string.error_invalid_password));
+            focusView = confirmPasswordView;
+            cancel = true;
+        } else if (! confirmPassword.equals(password)) {
+            confirmPasswordView.setError(getString(R.string.error_password_did_not_match));
+            focusView = confirmPasswordView;
+            cancel = true;
+        }
+
         if (cancel) {
             focusView.requestFocus();
         } else {
             showProgress(true);
-            authTask = new UserLoginTask(email, password);
-            authTask.execute((Void) null);
+            regTask = new UserRegisterTask(name, email, password);
+            regTask.execute((Void) null);
         }
+    }
+    private boolean isNameValid(String name) {
+        return !name.matches(".*\\d+.*");
     }
 
     private boolean isEmailValid(String email) {
@@ -160,6 +191,11 @@ public class LoginActivity extends AppCompatActivity {
         return password.length() > 4;
     }
 
+    public void hideKeyboard(View view) {
+        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     /**
      * Shows the progress UI and hides the login form.
      */
@@ -168,12 +204,12 @@ public class LoginActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            loginFormView.animate().setDuration(shortAnimTime).alpha(
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -187,30 +223,33 @@ public class LoginActivity extends AppCompatActivity {
             });
         } else {
             progressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            loginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            registerFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
-    public void launchRegister(View view) {
-        Log.d(LOG_TAG,"Tapped dont have account string");
-        //Toast.makeText(this,"Register new account", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this,RegisterActivity.class));
+    public void launchLogin(View view) {
+        Log.d(LOG_TAG,"Tapped already have account string");
+        //Toast.makeText(this,"Login with your account", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this,LoginActivity.class));
     }
 
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserRegisterTask extends AsyncTask<Void, Void, Boolean> {
+        @NonNull
+        private final String name;
         @NonNull
         private final String email;
         @NonNull
         private final String password;
 
-        UserLoginTask(String email, String password) {
+        UserRegisterTask(String name, String email, String password) {
+            this.name = name;
             this.email = email;
             this.password = password;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String address = "https://runvolution.herokuapp.com/login";
+            String address = "https://runvolution.herokuapp.com/register";
             HttpsURLConnection httpsPost = null;
             BufferedReader buffer = null;
             String msg = null;
@@ -221,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
                 httpsPost.setRequestMethod("POST");
                 httpsPost.setDoOutput(true);
                 DataOutputStream writer = new DataOutputStream(httpsPost.getOutputStream());
-                writer.writeBytes("email=" + email + "&password=" + password);
+                writer.writeBytes("name=" + name + "&email=" + email + "&password=" + password);
                 writer.flush();
                 writer.close();
                 buffer = new BufferedReader(new InputStreamReader(httpsPost.getInputStream()));
@@ -263,18 +302,19 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            authTask = null;
+            regTask = null;
             showProgress(false);
 
             if (success) {
-                //Toast.makeText(LoginActivity.this, "Succesfully logged in",Toast.LENGTH_SHORT).show();
                 SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean("logged",true);
                 editor.putString("email",email);
                 editor.putString("password",password);
                 editor.apply();
-                new UserDataLoader(email).execute((Void) null);
+                Toast.makeText(RegisterActivity.this, "Registration Success",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+                //new LoginActivity.UserDataLoader(email).execute((Void) null);
                 //startActivity(new Intent(LoginActivity.this, MainActivity.class));
             } else {
                 passwordView.setError(getString(R.string.error_incorrect_password));
@@ -284,125 +324,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-            authTask = null;
+            regTask = null;
             showProgress(false);
         }
     }
-
-    public class UserDataLoader extends AsyncTask<Void, Void, ArrayList<String>> {
-        @NonNull private final String email;
-
-        UserDataLoader(String email) {
-            this.email = email;
-        }
-
-        @Override
-        protected ArrayList<String> doInBackground(Void... params) {
-            ArrayList<String> jsonData = new ArrayList<String>();
-            String address = "https://runvolution.herokuapp.com/fetchuser";
-            String param = "?email=" + email;
-            HttpsURLConnection httpsGet = null;
-            BufferedReader reader = null;
-            String msg = null;
-
-            try {
-                URL urlAddress = new URL(address + param);
-                httpsGet = (HttpsURLConnection) urlAddress.openConnection();
-                httpsGet.setRequestMethod("GET");
-                httpsGet.connect();
-                reader = new BufferedReader(new InputStreamReader(httpsGet.getInputStream()));
-                String inputLine;
-                StringBuilder buffer = new StringBuilder();
-                int respCode = httpsGet.getResponseCode();
-                while ((inputLine = reader.readLine()) != null) {
-                    buffer.append(inputLine);
-                }
-                msg = buffer.toString();
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            } finally {
-                if (httpsGet != null) {
-                    httpsGet.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (msg == null) {
-                    Log.d("The server responded with : ", "Message is null");
-                } else {
-                    Log.d("The server responded with : ", msg);
-                }
-
-            }
-            jsonData.add(msg);
-            int petId = 0;
-            try {
-                JSONObject rawAccountData = new JSONObject(msg);
-                petId = rawAccountData.getInt("pet_id");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (petId != 0) {
-                address = "https://runvolution.herokuapp.com/fetchpet";
-                param = "?petid=" + petId;
-                httpsGet = null;
-                reader = null;
-                msg = null;
-
-                try {
-                    URL urlAddress = new URL(address + param);
-                    httpsGet = (HttpsURLConnection) urlAddress.openConnection();
-                    httpsGet.setRequestMethod("GET");
-                    httpsGet.connect();
-                    reader = new BufferedReader(new InputStreamReader(httpsGet.getInputStream()));
-                    String inputLine;
-                    StringBuilder buffer = new StringBuilder();
-                    int respCode = httpsGet.getResponseCode();
-                    while ((inputLine = reader.readLine()) != null) {
-                        buffer.append(inputLine);
-                    }
-                    msg = buffer.toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                } finally {
-                    if (httpsGet != null) {
-                        httpsGet.disconnect();
-                    }
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if  (msg == null) {
-                        Log.d("The server responded with : ", "Message is null");
-                    } else {
-                        Log.d("The server responded with : ", msg);
-                    }
-                }
-                jsonData.add(msg);
-            }
-            return jsonData;
-        }
-        @Override
-        protected void onPostExecute(final ArrayList<String> jsonData) {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userData",jsonData.get(0));
-            intent.putExtra("petData",jsonData.get(1));
-            startActivity(intent);
-        }
-    }
-
-    public void hideKeyboard(View view) {
-        InputMethodManager inputMethodManager =(InputMethodManager)getSystemService(Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
-    }
 }
-
