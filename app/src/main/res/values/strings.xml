@@ -31,5 +31,6 @@
     <string name="error_invalid_name">Name can not contains number</string>
     <string name="error_password_did_not_match">Passwords did not match</string>
     <string name="prompt_login">Already have an account?</string>
+    <string name="title_activity_register">Sign Up</string>
     <string name="title_pet">Pet</string>
 </resources>

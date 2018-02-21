@@ -38,6 +38,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
@@ -100,6 +102,9 @@ public class LoginActivity extends AppCompatActivity {
                 Log.d(LOG_TAG, "Tapped sign in");
                 NetworkInfo networkInfo = ((ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE)).getActiveNetworkInfo();
                 if (networkInfo != null && networkInfo.isConnected()) {
+                    FirebaseMessaging.getInstance().subscribeToTopic("pet");
+                    String token = FirebaseInstanceId.getInstance().getToken();
+                    Log.d(LOG_TAG, "User FCM token : " + token);
                     attemptLogin();
                 } else {
                     Toast.makeText(LoginActivity.this, "You are not connected to the internet", Toast.LENGTH_SHORT).show();
