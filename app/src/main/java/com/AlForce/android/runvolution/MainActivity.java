@@ -20,17 +20,8 @@ import com.AlForce.android.runvolution.utils.FragmentFactory;
 
 public class MainActivity extends AppCompatActivity {
     Bundle bundle;
-    public static final String TAG_ACTIVITY = MainActivity.class.getSimpleName();
-
-    private FragmentManager fragmentManager;
 
     public static final String TAG = MainActivity.class.getSimpleName();
-    public static final String TAB_HOME = FragmentFactory.TAG_FRAGMENT_HOME;
-    public static final String TAB_HISTORY = FragmentFactory.TAG_FRAGMENT_HISTORY;
-    public static final String TAB_STATUS = FragmentFactory.TAG_FRAGMENT_STATUS;
-    public static final String[] TABS = {
-            TAB_HOME, TAB_HISTORY, TAB_STATUS
-    };
 
     private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
@@ -44,17 +35,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbHelper = new DatabaseOpenHelper(this);
+
         fragmentManager = getSupportFragmentManager();
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         Intent intent = getIntent();
         String userData = intent.getStringExtra("userData");
         String petData = intent.getStringExtra("petData");
         bundle = new Bundle();
         bundle.putString("userData", userData);
-        bundle.putString("petData",petData);
+        bundle.putString("petData", petData);
         loadFragment(FragmentFactory.TAG_FRAGMENT_HOME, bundle);
-        dbHelper = new DatabaseOpenHelper(this);
+
         initializeShakeDetector();
     }
 
