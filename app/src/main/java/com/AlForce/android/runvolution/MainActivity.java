@@ -27,13 +27,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String TAB_HOME = FragmentFactory.TAG_FRAGMENT_HOME;
     public static final String TAB_HISTORY = FragmentFactory.TAG_FRAGMENT_HISTORY;
-    public static final String TAB_STATUS = FragmentFactory.TAG_FRAGMENT_STATUS;
-    public static final String[] TABS = {
-            TAB_HOME, TAB_HISTORY, TAB_STATUS
-    };
-
+    public static final String TAB_STATUS = FragmentFactory.TAG_FRAGMENT_PET;
+    public static final String[] TABS = {TAB_HOME, TAB_HISTORY, TAB_STATUS};
     private DatabaseOpenHelper dbHelper;
-    private FragmentManager fragmentManager;
 
     /* Shake Detection Variables*/
     private SensorManager mSensorManager;
