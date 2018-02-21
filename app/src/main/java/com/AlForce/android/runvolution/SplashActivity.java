@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -147,8 +148,10 @@ public class SplashActivity extends AppCompatActivity {
         protected void onPostExecute(final ArrayList<String> jsonData) {
             loadTask = null;
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            intent.putExtra("userData",jsonData.get(0));
-            intent.putExtra("petData",jsonData.get(1));
+            if (jsonData != null) {
+                intent.putExtra("userData",jsonData.get(0));
+                intent.putExtra("petData",jsonData.get(1));
+            }
             startActivity(intent);
         }
 

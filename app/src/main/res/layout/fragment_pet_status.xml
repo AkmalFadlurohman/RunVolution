@@ -50,6 +50,4 @@
         android:textSize="30sp"
         android:typeface="normal" />
 
-
-
 </FrameLayout>

@@ -13,7 +13,6 @@ import com.AlForce.android.runvolution.R;
 
 import org.json.JSONObject;
 
-
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -46,7 +45,8 @@ public class PetStatusFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_pet_status, container, false);
     }
@@ -61,5 +61,4 @@ public class PetStatusFragment extends Fragment {
         petXPView.setText(petXPView.getText().toString() +  " " +  String.format("%d",petXP));
 
     }
-
 }
