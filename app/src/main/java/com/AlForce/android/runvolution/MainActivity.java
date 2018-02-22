@@ -12,17 +12,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.AlForce.android.runvolution.sensor.ShakeDetector;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
-import com.AlForce.android.runvolution.utils.FragmentFactory;
 
 public class MainActivity extends AppCompatActivity {
-    Bundle bundle;
 
     public static final String TAG = MainActivity.class.getSimpleName();
     public static final String TAG_FRAGMENT_HOME = "home";
@@ -56,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
-            showFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+            showFragment(TAG_FRAGMENT_HOME);
         }
 
         initializeShakeDetector();
@@ -128,15 +124,12 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
                     showFragment(TAG_FRAGMENT_HOME);
                     return true;
                 case R.id.navigation_history:
-//                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
                     showFragment(TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-//                    loadFragment(FragmentFactory.TAG_FRAGMENT_PET);
                     showFragment(TAG_FRAGMENT_PET);
                     return true;
             }
