@@ -11,7 +11,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.AlForce.android.runvolution.history.HistoryDAO;
+import com.AlForce.android.runvolution.history.HistoryItem;
+import com.AlForce.android.runvolution.history.HistoryStatistics;
 import com.AlForce.android.runvolution.timer.Timer;
+import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
+import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
 
 
 /**
@@ -19,11 +24,28 @@ import com.AlForce.android.runvolution.timer.Timer;
  */
 public class HomeFragment extends Fragment {
 
-    public TextView timerTextView;
     public Button timerButton;
+    public TextView timerTextView;
+    private TextView distanceTextView;
+    private TextView stepTextView;
+    private TextView totalDistanceTextView;
     private Timer timer;
+
+    private DatabaseOpenHelper dbHelper;
+    private DatabaseUpdateListener updateListener;
+    private HistoryStatistics statistics;
+    private HistoryDAO historyDAO;
+
+    private float totalDistance;
+    private float currentDistance;
+    private int currentSteps;
+
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    public void setDbHelper(DatabaseOpenHelper dbHelper) {
+        this.dbHelper = dbHelper;
     }
 
     @Override
@@ -39,6 +61,12 @@ public class HomeFragment extends Fragment {
 
         timerButton = (Button) getView().findViewById(R.id.timerButton);
         timerTextView = (TextView) getView().findViewById(R.id.timerView);
+        distanceTextView = (TextView) getView().findViewById(R.id.distanceView);
+        stepTextView = (TextView) getView().findViewById(R.id.stepCounterView);
+        totalDistanceTextView = (TextView) getView().findViewById(R.id.totalDistanceView);
+
+        initializeHistoryAccess();
+
         timer = new Timer(timerTextView);
         timerButton.setText("START");
         timerButton.setOnClickListener(new View.OnClickListener() {
@@ -63,5 +91,27 @@ public class HomeFragment extends Fragment {
         timer.timerHandler.removeCallbacks(timer.timerRunnable);
         Button button = (Button) getView().findViewById(R.id.timerButton);
         button.setText("START");
+    }
+
+    private void initializeHistoryAccess() {
+        if (dbHelper != null) {
+            historyDAO = new HistoryDAO(dbHelper);
+            statistics = new HistoryStatistics(historyDAO);
+            updateListener = new DatabaseUpdateListener() {
+                @Override
+                public void onDatabaseUpdate() {
+                    totalDistance = statistics.getTotalDistance();
+                    totalDistanceTextView.setText(Float.toString(totalDistance));
+                }
+            };
+            historyDAO.setListener(updateListener);
+
+            totalDistance = statistics.getTotalDistance();
+            totalDistanceTextView.setText(Float.toString(totalDistance));
+        }
+    }
+
+    private void saveCurrentRecord() {
+
     }
 }

@@ -140,7 +140,9 @@ public class MainActivity extends AppCompatActivity {
     private void loadAllFragments() {
         fragmentManager = getSupportFragmentManager();
         mHomeFragment = new HomeFragment();
+        mHomeFragment.setDbHelper(dbHelper);
         mHistoryFragment = new HistoryFragment();
+        mHistoryFragment.setDbHelper(dbHelper);
         mPetFragment = new PetStatusFragment();
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
