@@ -149,6 +149,20 @@ public class SplashActivity extends AppCompatActivity {
             loadTask = null;
             Intent intent = new Intent(SplashActivity.this, MainActivity.class);
             if (jsonData != null) {
+                String petData = jsonData.get(1);
+                int petLevel = 1;
+                int petXP = 0;
+                try {
+                    JSONObject rawPetData = new JSONObject(petData);
+                    petLevel = rawPetData.getInt("level");
+                    petXP = rawPetData.getInt("xp");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt("petLevel", petLevel);
+                editor.putInt("petXP", petXP);
                 intent.putExtra("userData",jsonData.get(0));
                 intent.putExtra("petData",jsonData.get(1));
             }

@@ -404,10 +404,19 @@ public class LoginActivity extends AppCompatActivity {
             String petData = jsonData.get(1);
             String name = null;
             String email = null;
+            String petName = null;
+            int petLevel = 1;
+            int petXP = 0;
+            int petId = 0;
             try {
                 JSONObject rawAccountData = new JSONObject(userData);
+                JSONObject rawPetData = new JSONObject(petData);
                 name = rawAccountData.getString("name");
                 email = rawAccountData.getString("email");
+                petId = rawPetData.getInt("id");
+                petName = rawPetData.getString("name");
+                petLevel = rawPetData.getInt("level");
+                petXP = rawPetData.getInt("xp");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -416,6 +425,10 @@ public class LoginActivity extends AppCompatActivity {
             editor.putBoolean("logged",true);
             editor.putString("name",name);
             editor.putString("email",email);
+            editor.putInt("petId", petId);
+            editor.putString("petName", petName);
+            editor.putInt("petLevel", petLevel);
+            editor.putInt("petXP", petXP);
             editor.apply();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.putExtra("userData",userData);
