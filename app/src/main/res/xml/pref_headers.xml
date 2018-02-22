@@ -3,7 +3,7 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.AlForce.android.runvolution.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="com.AlForce.android.runvolution.SettingsActivity$AccountPreferenceFragment"
         android:icon="@drawable/ic_account_black_24dp"
         android:title="@string/pref_header_account" />
 
