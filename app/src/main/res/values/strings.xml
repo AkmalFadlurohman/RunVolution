@@ -110,4 +110,5 @@
     <string name="pref_header_account">Account</string>
     <string name="pref_title_account_name">Name</string>
     <string name="pref_title_account_email">Email</string>
+    <string name="action_signout">Sign Out</string>
 </resources>

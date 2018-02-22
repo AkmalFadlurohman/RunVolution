@@ -3,6 +3,7 @@ package com.AlForce.android.runvolution;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -19,6 +20,8 @@ import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
+import android.view.View;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -143,6 +146,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         return super.onMenuItemSelected(featureId, item);
     }
 
+    @Override
+    public void onHeaderClick(Header header, int position) {
+        if(header.fragmentArguments == null)
+        {
+            header.fragmentArguments = new Bundle();
+        }
+        SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+        String name = preferences.getString("name","John Doe");
+        String email = preferences.getString("email", "johndoe@email.com");
+        header.fragmentArguments.putString("name", name);
+        header.fragmentArguments.putString("email", email);
+        super.onHeaderClick(header, position);
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -183,16 +200,31 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_account);
             setHasOptionsMenu(true);
 
-            // Bind the summaries of EditText/List/Dialog/Ringtone preferences
-            // to their values. When their values change, their summaries are
-            // updated to reflect the new value, per the Android Design
-            // guidelines.
-            //bindPreferenceSummaryToValue(findPreference("account_name"));
-            //bindPreferenceSummaryToValue(findPreference("example_list"));
-            Preference accountName = findPreference("account_name");
-            Preference accountEmail = findPreference("account_email");
-            accountName.setSummary("Akmal Fadlurohman");
-            accountEmail.setSummary("srayleight@ymail.com");
+            // Bind the summaries of EditText/List/Dialog/Ringtone preferences from Shared Preferences value
+            Bundle bundle = getArguments();
+            if(bundle != null) {
+                String name = bundle.getString("name");
+                String email = bundle.getString("email");
+                Preference accountName = findPreference("account_name");
+                Preference accountEmail = findPreference("account_email");
+                Preference signoutPref = findPreference("action_signout");
+                signoutPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        SharedPreferences preferences = AccountPreferenceFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+                        preferences.edit().remove("logged").apply();
+                        preferences.edit().remove("name").apply();
+                        preferences.edit().remove("email").apply();
+                        Intent signoutIntent = new Intent(getActivity(), LoginActivity.class);
+                        //signoutIntent.putExtra("signout", true);
+                        startActivity(signoutIntent);
+                        return true;
+                    }
+                });
+                accountName.setSummary(name);
+                accountEmail.setSummary(email);
+            }
         }
 
         @Override

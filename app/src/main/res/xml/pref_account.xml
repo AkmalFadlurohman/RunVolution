@@ -12,4 +12,9 @@
         android:singleLine="true"
         android:title="@string/pref_title_account_email" />
 
+    <Preference
+        android:key="action_signout"
+        android:capitalize="words"
+        android:title="@string/action_signout"/>
+
 </PreferenceScreen>
