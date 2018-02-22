@@ -16,16 +16,14 @@ public class FragmentFactory {
     public static final String TAG_FRAGMENT_HISTORY = "history";
     public static final String TAG_FRAGMENT_PET = "pet";
 
-    public static Fragment createFragment(String fragmentTag, Bundle data) {
+    public static Fragment createFragment(String fragmentTag) {
         switch (fragmentTag) {
             case TAG_FRAGMENT_HISTORY:
                 return new HistoryFragment();
             case TAG_FRAGMENT_HOME:
                 return new HomeFragment();
             case TAG_FRAGMENT_PET:
-                PetStatusFragment petStatusFragment = new PetStatusFragment();
-                petStatusFragment.setArguments(data);
-                return petStatusFragment;
+                return new PetStatusFragment();
         }
 
         return new Fragment();

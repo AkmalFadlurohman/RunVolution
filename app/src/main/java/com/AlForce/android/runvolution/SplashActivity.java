@@ -33,8 +33,6 @@ public class SplashActivity extends AppCompatActivity {
             if (email != null) {
                 new UserDataLoader(email).execute((Void) null);
             }
-            //startActivity(new Intent(SplashActivity.this, MainActivity.class));
-
         } else {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
         }

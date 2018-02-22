@@ -67,15 +67,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Handle user sign out and clear shared preferences
-        /*Intent intent = getIntent();
-        Boolean signedout = intent.getBooleanExtra("signout", false);
-        if (signedout) {
-            SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
-            preferences.edit().remove("logged").apply();
-            preferences.edit().remove("name").apply();
-            preferences.edit().remove("email").apply();
-        }*/
         // Set up the login form.
         emailView = (EditText) findViewById(R.id.email);
         passwordView = (EditText) findViewById(R.id.password);
