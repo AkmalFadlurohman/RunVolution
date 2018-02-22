@@ -25,9 +25,17 @@ public class MainActivity extends AppCompatActivity {
     Bundle bundle;
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG_FRAGMENT_HOME = "home";
+    public static final String TAG_FRAGMENT_HISTORY = "history";
+    public static final String TAG_FRAGMENT_PET = "pet";
 
-    private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
+    private DatabaseOpenHelper dbHelper;
+
+    /* Fragments */
+    private HomeFragment mHomeFragment;
+    private HistoryFragment mHistoryFragment;
+    private PetStatusFragment mPetFragment;
 
     /* Shake Detection Variables*/
     private SensorManager mSensorManager;
@@ -42,12 +50,13 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         dbHelper = new DatabaseOpenHelper(this);
-        fragmentManager = getSupportFragmentManager();
+        loadAllFragments();
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         if (savedInstanceState == null) {
-            loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+            showFragment(FragmentFactory.TAG_FRAGMENT_HOME);
         }
 
         initializeShakeDetector();
@@ -119,36 +128,48 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+//                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME);
+                    showFragment(TAG_FRAGMENT_HOME);
                     return true;
                 case R.id.navigation_history:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
+//                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY);
+                    showFragment(TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_PET);
+//                    loadFragment(FragmentFactory.TAG_FRAGMENT_PET);
+                    showFragment(TAG_FRAGMENT_PET);
                     return true;
             }
             return false;
         }
     };
 
-    private void loadFragment(String fragmentTag) {
+    private void loadAllFragments() {
+        fragmentManager = getSupportFragmentManager();
+        mHomeFragment = new HomeFragment();
+        mHistoryFragment = new HistoryFragment();
+        mPetFragment = new PetStatusFragment();
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.container, mPetFragment, TAG_FRAGMENT_PET);
+        transaction.hide(mPetFragment);
+        transaction.add(R.id.container, mHistoryFragment, TAG_FRAGMENT_HISTORY);
+        transaction.hide(mHistoryFragment);
+        transaction.add(R.id.container, mHomeFragment, TAG_FRAGMENT_HOME);
+        transaction.hide(mHomeFragment);
+        transaction.commitNow();
+    }
+
+    private void showFragment(String fragmentTag) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         for (Fragment fr : fragmentManager.getFragments()) {
             if (!fr.getTag().equals(fragmentTag)) {
-                fragmentTransaction.detach(fr);
+                fragmentTransaction.hide(fr);
             }
         }
 
         Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
-
-        if (fragment == null) {
-            fragment = FragmentFactory.createFragment(fragmentTag);
-            fragmentTransaction.add(R.id.container, fragment, fragmentTag);
-        } else {
-            fragmentTransaction.attach(fragment);
-        }
-
+        fragmentTransaction.show(fragment);
         fragmentTransaction.commit();
     }
 
