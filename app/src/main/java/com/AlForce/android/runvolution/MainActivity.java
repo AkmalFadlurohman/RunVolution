@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.location.Location;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 
+import com.AlForce.android.runvolution.location.LocationService;
 import com.AlForce.android.runvolution.sensor.ShakeDetector;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 import com.AlForce.android.runvolution.utils.FragmentFactory;
@@ -26,10 +28,15 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
 
-    /* Shake Detection Variables*/
+    /* Shake Detection Variables */
     private SensorManager mSensorManager;
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
+
+    /* Location Service Variables */
+    private LocationService mLocationService;
+    private float mTotalDistance;
+    private Location mCurrentLocation;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,16 @@ public class MainActivity extends AppCompatActivity {
         loadFragment(FragmentFactory.TAG_FRAGMENT_HOME, bundle);
 
         initializeShakeDetector();
+        if (LocationService.isGooglePlayServicesAvailable(this)){
+            initializeLocationService();
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -59,12 +76,32 @@ public class MainActivity extends AppCompatActivity {
                 mShakeDetector,
                 mAccelerometer,
                 SensorManager.SENSOR_DELAY_UI);
+
+        // TODO: This should be moved to start-running button implementation.
+        if (mLocationService != null) {
+            mLocationService.buildGoogleClient();
+            if (mLocationService.isConnected()) {
+                mLocationService.startLocationUpdates();
+            }
+        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mShakeDetector);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        // TODO: This should be moved to stop-running button implementation.
+        if (mLocationService != null) {
+            if (mLocationService.isConnected()) {
+                mLocationService.stopLocationUpdates();
+            }
+        }
     }
 
     private void initializeShakeDetector() {
@@ -89,6 +126,26 @@ public class MainActivity extends AppCompatActivity {
                 };
 
         return listener;
+    }
+
+    private void initializeLocationService() {
+        mLocationService = new LocationService(this);
+        mLocationService.setLocationServiceListener(
+                new LocationService.LocationServiceListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        if (mCurrentLocation == null) {
+                            mTotalDistance = 0;
+                        } else {
+                            mTotalDistance += mCurrentLocation.distanceTo(location);
+                        }
+                        mCurrentLocation = location;
+                        Log.d(TAG, "onLocationChanged: " + mTotalDistance + " meters.");
+                    }
+                }
+        );
+        Log.d(TAG, "initializeLocationService: initialized.");
+        Log.d(TAG, "initializeLocationService: " + mLocationService.isConnected());
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
