@@ -28,15 +28,14 @@ public class SplashActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
         Boolean logged = preferences.getBoolean("logged", false);
         if (logged) {
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
             String email = preferences.getString("email", null);
             if (email != null) {
                 new UserDataLoader(email).execute((Void) null);
             }
         } else {
             startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            finish();
         }
-        finish();
     }
 
     public class UserDataLoader extends AsyncTask<Void, Void, ArrayList<String>> {
@@ -165,6 +164,7 @@ public class SplashActivity extends AppCompatActivity {
                 intent.putExtra("petData",jsonData.get(1));
             }
             startActivity(intent);
+            finish();
         }
 
         @Override
