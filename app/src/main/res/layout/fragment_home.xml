@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_margin="@dimen/activity_vertical_margin"
         >
 
         <LinearLayout
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="left"
-            android:layout_marginBottom="@dimen/activity_vertical_margin">
+            >
             <TextView
                 android:id="@+id/welcomeMessage"
                 android:layout_width="wrap_content"
@@ -39,17 +40,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_gravity="start">
+            android:layout_marginTop="10dp">
 
             <TextView
                 android:id="@+id/totalDistanceTag"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total Distance : "
+                android:text="Total Distance :"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                 android:textSize="24sp"
-                android:layout_weight="1"/>
+                android:layout_weight="0"/>
 
             <TextView
                 android:id="@+id/totalDistanceView"
@@ -67,11 +68,11 @@
                 android:layout_height="wrap_content"
                 android:text="Share"
                 android:background="@android:color/holo_green_light"
-                android:layout_weight="4"/>
+                android:layout_weight="5"/>
         </LinearLayout>
 
         <TextView
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="70dp"
             android:id="@+id/distanceTag"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
