@@ -411,6 +411,7 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra("userData",userData);
             intent.putExtra("petData",petData);
             startActivity(intent);
+            finish();
         }
     }
 
