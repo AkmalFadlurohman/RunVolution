@@ -9,4 +9,9 @@
         android:singleLine="true"
         android:title="@string/pref_pet_name" />
 
+    <Preference
+        android:key="action_save"
+        android:capitalize="words"
+        android:title="@string/action_save"/>
+
 </PreferenceScreen>

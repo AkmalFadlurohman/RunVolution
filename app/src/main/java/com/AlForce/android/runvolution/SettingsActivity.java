@@ -170,6 +170,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     preferences.edit().remove("logged").apply();
                     preferences.edit().remove("name").apply();
                     preferences.edit().remove("email").apply();
+                    startActivity(new Intent(SettingsActivity.getAppContext(),LoginActivity.class));
                     return true;
                 }
             });
@@ -199,12 +200,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object value) {
                     String newPetName = value.toString();
-                    SharedPreferences preferences = PetPreferenceFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+                    //SharedPreferences preferences = PetPreferenceFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
                     if (isPetNameValid(newPetName)) {
-                        preferences.edit().putString(preference.getKey(),newPetName).apply();
+                        //preferences.edit().putString(preference.getKey(),newPetName).apply();
                         preference.setSummary(newPetName);
-                        int petId = preferences.getInt("petId",0);
-                        new PetNameUpdaterTask(petId,newPetName).execute((Void) null);
+                        //int petId = preferences.getInt("petId",0);
+                        //new PetNameUpdaterTask(petId,newPetName).execute((Void) null);
                     } else {
                         preference.setSummary("Please fill a proper pet name");
                     }
@@ -217,10 +218,23 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             SharedPreferences preferences = PetPreferenceFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
             String petName = preferences.getString("petName","Bobby");
 
-            Preference petNamePref = findPreference("petName");
+            final Preference petNamePref = findPreference("petName");
             petNamePref.setSummary(petName);
             petNamePref.setOnPreferenceChangeListener(bindPreferenceSummaryToValueListener);
             bindPreferenceSummaryToValueListener.onPreferenceChange(petNamePref, preferences.getString("petName",""));
+            Preference savePref = findPreference("action_save");
+            savePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    SharedPreferences preferences = PetPreferenceFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+                    int petId = preferences.getInt("petId",0);
+                    String newPetName = petNamePref.getSummary().toString();
+                    preferences.edit().putString("petName",newPetName).apply();
+                    new PetNameUpdaterTask(petId,newPetName).execute((Void) null);
+                    return true;
+                }
+            });
         }
 
 
