@@ -11,12 +11,27 @@ public class HistoryStatistics implements DatabaseUpdateListener {
 
     private int avgSteps;
     private float avgDistance;
+    private float totalDistance;
 
     private HistoryDAO historyDAO;
 
     public HistoryStatistics(HistoryDAO historyDAO) {
         this.historyDAO = historyDAO;
         this.historyDAO.setListener(this);
+    }
+
+    public float getTotalDistance() {
+        updateTotalDistance();
+        return totalDistance;
+    }
+
+    private void updateTotalDistance() {
+        long historyCount = historyDAO.getQueryCount();
+        float distanceSum = 0;
+        for (int i = 0; i < historyCount; i++) {
+            distanceSum += historyDAO.query(i).getDistance();
+        }
+        totalDistance = distanceSum;
     }
 
     public int getAvgSteps() {
@@ -49,6 +64,7 @@ public class HistoryStatistics implements DatabaseUpdateListener {
 
     @Override
     public void onDatabaseUpdate() {
+        updateTotalDistance();
         updateAvgDistance();
         updateAvgSteps();
     }
