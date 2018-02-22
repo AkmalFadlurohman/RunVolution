@@ -272,15 +272,7 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (success) {
-                //Toast.makeText(LoginActivity.this, "Succesfully logged in",Toast.LENGTH_SHORT).show();
-                SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean("logged",true);
-                editor.putString("email",email);
-                editor.putString("password",password);
-                editor.apply();
                 new UserDataLoader(email).execute((Void) null);
-                //startActivity(new Intent(LoginActivity.this, MainActivity.class));
             } else {
                 passwordView.setError(getString(R.string.error_incorrect_password));
                 passwordView.requestFocus();
@@ -398,10 +390,41 @@ public class LoginActivity extends AppCompatActivity {
         }
         @Override
         protected void onPostExecute(final ArrayList<String> jsonData) {
+            String userData = jsonData.get(0);
+            String petData = jsonData.get(1);
+            String name = null;
+            String email = null;
+            String petName = null;
+            int petLevel = 1;
+            int petXP = 0;
+            int petId = 0;
+            try {
+                JSONObject rawAccountData = new JSONObject(userData);
+                JSONObject rawPetData = new JSONObject(petData);
+                name = rawAccountData.getString("name");
+                email = rawAccountData.getString("email");
+                petId = rawPetData.getInt("id");
+                petName = rawPetData.getString("name");
+                petLevel = rawPetData.getInt("level");
+                petXP = rawPetData.getInt("xp");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            SharedPreferences preferences = getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putBoolean("logged",true);
+            editor.putString("name",name);
+            editor.putString("email",email);
+            editor.putInt("petId", petId);
+            editor.putString("petName", petName);
+            editor.putInt("petLevel", petLevel);
+            editor.putInt("petXP", petXP);
+            editor.apply();
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            intent.putExtra("userData",jsonData.get(0));
-            intent.putExtra("petData",jsonData.get(1));
+            intent.putExtra("userData",userData);
+            intent.putExtra("petData",petData);
             startActivity(intent);
+            finish();
         }
     }
 
