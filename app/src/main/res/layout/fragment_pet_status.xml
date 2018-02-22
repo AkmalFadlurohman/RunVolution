@@ -5,16 +5,6 @@
     tools:context="com.AlForce.android.runvolution.PetStatusFragment">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:fontFamily="monospace"
-        android:text="Pet"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textSize="36sp"
-        android:typeface="normal" />
-
-    <TextView
         android:id="@+id/pet_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
