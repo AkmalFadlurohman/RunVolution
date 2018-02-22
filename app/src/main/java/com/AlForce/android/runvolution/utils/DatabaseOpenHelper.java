@@ -63,7 +63,7 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(HISTORY_TABLE_CREATE);
 
-        fillDatabaseWithData(db);
+        //fillDatabaseWithData(db);
     }
 
     // TODO: Remove this hardcoded data later.

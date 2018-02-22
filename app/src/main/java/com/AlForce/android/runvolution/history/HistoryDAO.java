@@ -51,7 +51,7 @@ public class HistoryDAO implements DatabaseAccessObject<HistoryItem> {
     @Override
     public HistoryItem query(int position) {
         String query = " SELECT * FROM " + HISTORY_TABLE +
-                " ORDER BY " + COLUMN_DATE + " ASC " +
+                " ORDER BY " + COLUMN_DATE + " DESC " +
                 "LIMIT " + position + ", 1";
 
         HistoryItem entry = new HistoryItem();

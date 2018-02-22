@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,15 @@ import com.AlForce.android.runvolution.timer.Timer;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
 
+import java.util.Date;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class HomeFragment extends Fragment {
 
+    private static final String TAG = HomeFragment.class.getSimpleName();
     public Button timerButton;
     public TextView timerTextView;
     private TextView distanceTextView;
@@ -74,15 +78,52 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 Button button = (Button) view;
                 if (button.getText().equals("STOP")) {
-                    timer.timerHandler.removeCallbacks(timer.timerRunnable);
+                    startRecording();
                     button.setText("START");
                 } else {
-                    timer.startTime = System.currentTimeMillis();
-                    timer.timerHandler.postDelayed(timer.timerRunnable, 0);
+                    stopRecording();
                     button.setText("STOP");
                 }
             }
         });
+    }
+
+    private void initializeHistoryAccess() {
+        historyDAO = new HistoryDAO(dbHelper);
+        statistics = new HistoryStatistics(historyDAO);
+        updateListener = new DatabaseUpdateListener() {
+            @Override
+            public void onDatabaseUpdate() {
+                totalDistance = statistics.getTotalDistance();
+                totalDistanceTextView.setText(Float.toString(totalDistance));
+            }
+        };
+        historyDAO.setListener(updateListener);
+
+        totalDistance = statistics.getTotalDistance();
+        totalDistanceTextView.setText(Float.toString(totalDistance));
+    }
+
+    private void startRecording() {
+        currentDistance = 0;
+        currentSteps = 0;
+        timer.timerHandler.removeCallbacks(timer.timerRunnable);
+    }
+
+    private void stopRecording() {
+        timer.startTime = System.currentTimeMillis();
+        timer.timerHandler.postDelayed(timer.timerRunnable, 0);
+        saveCurrentRecord();
+    }
+
+    private void saveCurrentRecord() {
+        HistoryItem record = new HistoryItem();
+        record.setDate(new Date());
+        record.setDistance(currentDistance);
+        record.setSteps(currentSteps);
+
+        long newId = historyDAO.insert(record);
+        Log.d(TAG, "saveCurrentRecord: Created item with id="+newId);
     }
 
     @Override
@@ -91,27 +132,5 @@ public class HomeFragment extends Fragment {
         timer.timerHandler.removeCallbacks(timer.timerRunnable);
         Button button = (Button) getView().findViewById(R.id.timerButton);
         button.setText("START");
-    }
-
-    private void initializeHistoryAccess() {
-        if (dbHelper != null) {
-            historyDAO = new HistoryDAO(dbHelper);
-            statistics = new HistoryStatistics(historyDAO);
-            updateListener = new DatabaseUpdateListener() {
-                @Override
-                public void onDatabaseUpdate() {
-                    totalDistance = statistics.getTotalDistance();
-                    totalDistanceTextView.setText(Float.toString(totalDistance));
-                }
-            };
-            historyDAO.setListener(updateListener);
-
-            totalDistance = statistics.getTotalDistance();
-            totalDistanceTextView.setText(Float.toString(totalDistance));
-        }
-    }
-
-    private void saveCurrentRecord() {
-
     }
 }
