@@ -7,30 +7,53 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TextView
-        android:id="@+id/timerView"
+        android:id="@+id/timerTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="36dp"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="80dp"
+        android:text="Time"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/timerView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="120dp"
         android:text="0:00"
-        />
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp" />
+
+    <TextView
+        android:id="@+id/distanceTag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="210dp"
+        android:layout_marginTop="80dp"
+        android:text="Distance"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp" />
 
     <TextView
         android:id="@+id/distanceView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="224dp"
-        android:layout_marginTop="76dp"
-        android:text="I LIVE! (distance)"
-        />
+        android:layout_marginTop="120dp"
+        android:text="0.00 m"
+        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+        android:textSize="36sp" />
 
     <Button
         android:id="@+id/timerButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginLeft="120dp"
-        android:layout_marginTop="168dp"
-        android:text="START"
-        />
+        android:layout_marginTop="225dp"
+        android:background="@drawable/timer_button_shape"
+        android:fontFamily="sans-serif-condensed"
+        android:text="START" />
 
 </FrameLayout>
