@@ -4,6 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="pet_fragment_vertical_margin">30dp</dimen>
     <dimen name="padding_regular">10dp</dimen>
+    <dimen name="list_divider_height">1dp</dimen>
+    <dimen name="padding_short">5dp</dimen>
     <dimen name="pet_title">35sp</dimen>
     <dimen name="pet_data">25sp</dimen>
 </resources>

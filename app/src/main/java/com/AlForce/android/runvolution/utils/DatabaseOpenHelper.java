@@ -62,21 +62,6 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(HISTORY_TABLE_CREATE);
-
-        //fillDatabaseWithData(db);
-    }
-
-    // TODO: Remove this hardcoded data later.
-    private void fillDatabaseWithData(SQLiteDatabase db) {
-        ContentValues values = new ContentValues();
-
-        for (int i = 0; i < 100; i++) {
-            values.put(HISTORY_COLUMN_ID, i);
-            values.put(HISTORY_COLUMN_DATE, new Date().getTime());
-            values.put(HISTORY_COLUMN_STEPS, (i*100));
-            values.put(HISTORY_COLUMN_DISTANCE, 0);
-            db.insert(HISTORY_TABLE_TABLENAME, null, values);
-        }
     }
 
     @Override

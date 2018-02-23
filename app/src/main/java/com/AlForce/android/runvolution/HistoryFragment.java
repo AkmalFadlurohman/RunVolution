@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
@@ -31,10 +32,6 @@ public class HistoryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setDbHelper(DatabaseOpenHelper dbHelper) {
-        this.dbHelper = dbHelper;
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -46,6 +43,8 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        dbHelper = new DatabaseOpenHelper(getContext());
 
         historyView = (RecyclerView) getView().findViewById(R.id.historyView);
         historyView.setHasFixedSize(true);
