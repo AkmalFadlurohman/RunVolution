@@ -124,67 +124,6 @@
                     android:typeface="normal" />
 
             </RelativeLayout>
-            <!--<RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="140sp"
-                android:background="@drawapet_title_viewview" >
-
-                <TextView
-                    android:id="@+id/title_pet_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:fontFamily="monospace"
-                    android:layout_marginTop="70sp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="30sp"
-                    android:typeface="normal" />
-
-                <TextView
-                    android:id="@+id/data_pet_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:layout_alignBottom="@+id/title_pet_level"
-                    android:layout_marginTop="10sp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="30sp"
-                    android:typeface="normal" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="210sp"
-                android:background="@drawapet_title_viewview" >
-
-                <TextView
-                    android:id="@+id/title_pet_xp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-
-                    android:fontFamily="monospace"
-                    android:layout_marginTop="70sp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="30sp"
-                    android:typeface="normal" />
-
-                <TextView
-                    android:id="@+id/data_pet_xp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="monospace"
-                    android:layout_alignBottom="@+id/title_pet_xp"
-                    android:layout_marginTop="10sp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="30sp"
-                    android:typeface="normal" />
-
-            </RelativeLayout> -->
 
         </RelativeLayout>
     </ScrollView>

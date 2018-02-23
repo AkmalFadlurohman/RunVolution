@@ -8,10 +8,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,8 @@ import static android.content.Context.MODE_PRIVATE;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
+    private TextView nameView;
+    private TextView welcomeView;
     public Button timerButton;
     public TextView timerTextView;
     private TextView distanceTextView;
@@ -74,6 +78,13 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ScrollView scrollView = (ScrollView) getView().findViewById(R.id.home_scroll_view);
+        int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) + 10, getResources().getDisplayMetrics());
+        scrollView.setPadding(horizontalMargin, topMargin, horizontalMargin, verticalMargin);
+        welcomeView = (TextView) getView().findViewById(R.id.welcomeMessage);
+        nameView = (TextView) getView().findViewById(R.id.welcomeMessage_user);
         timerButton = (Button) getView().findViewById(R.id.timerButton);
         timerTextView = (TextView) getView().findViewById(R.id.timerView);
         distanceTextView = (TextView) getView().findViewById(R.id.distanceView);
@@ -97,6 +108,14 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        SharedPreferences preferences = this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
+        String name = preferences.getString("name",null);
+        if (name != null) {
+            if(name.contains(" ")) {
+                String nickName = name.substring(0,name.indexOf(" "));
+                nameView.setText(nickName);
+            }
+        }
     }
 
     private void initializeHistoryAccess() {
@@ -115,7 +134,7 @@ public class HomeFragment extends Fragment {
         historyDAO.setListener(updateListener);
 
         totalDistance = statistics.getTotalDistance();
-        totalDistanceTextView.setText(Float.toString(totalDistance));
+        totalDistanceTextView.setText(Float.toString(totalDistance) + " m");
     }
 
     private void startRecording() {
