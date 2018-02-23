@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.AlForce.android.runvolution.history.HistoryItem;
 import com.AlForce.android.runvolution.R;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import com.AlForce.android.runvolution.R;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
@@ -41,7 +44,8 @@ public class HistoryAdapter extends Adapter<HistoryAdapter.ViewHolder> {
         HistoryItem currentItem;
         currentItem = historyDAO.query(position);
 
-        String date = context.getString(R.string.date) + currentItem.getDate().toString();
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String date = context.getString(R.string.date) + dateFormat.format(currentItem.getDate()).toString();
         String steps = context.getString(R.string.steps) + Integer.toString(currentItem.getSteps());
         String distance = context.getString(R.string.distance) + Float.toString(currentItem.getDistance());
         holder.dateTextView.setText(date);
