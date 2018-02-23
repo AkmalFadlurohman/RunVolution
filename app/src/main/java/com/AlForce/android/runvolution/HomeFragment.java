@@ -24,6 +24,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.AlForce.android.runvolution.history.HistoryDAO;
 import com.AlForce.android.runvolution.history.HistoryItem;
@@ -38,6 +39,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -54,6 +56,7 @@ public class HomeFragment extends Fragment {
     private static final String TAG = HomeFragment.class.getSimpleName();
     private static final String TAG_TOTAL_DISTANCE = "totalDistance";
     private static final String LINE_TEXT_SCHEME = "line://msg/text/?";
+    private static final String DISTANCE_UNIT = " m";
 
     private TextView nameView;
     private TextView welcomeView;
@@ -159,12 +162,15 @@ public class HomeFragment extends Fragment {
             }
         }
         totalDistance = statistics.getTotalDistance();
-        totalDistanceTextView.setText(Float.toString(totalDistance));
+        totalDistanceTextView.setText(formatFloatToString(totalDistance));
     }
 
     private void initializeStepCounter() {
         mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        if (mStepCounter == null) {
+            Log.e(TAG, "initializeStepCounter: Step counter is not supported.");
+        }
         mStepDetector = new StepDetector();
         mStepDetector.setOnStepListener(new StepDetector.OnStepListener() {
             @Override
@@ -186,7 +192,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onDatabaseUpdate() {
                 totalDistance = statistics.getTotalDistance();
-                totalDistanceTextView.setText(Float.toString(totalDistance));
+                totalDistanceTextView.setText(formatFloatToString(totalDistance));
                 SharedPreferences preferences = HomeFragment.this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
                 String email = preferences.getString("email",null);
                 //new RecordUpdaterTask(email,totalDistance).execute((Void) null)
@@ -199,6 +205,8 @@ public class HomeFragment extends Fragment {
     private void startRecording() {
         currentDistance = 0;
         currentSteps = 0;
+        timerTextView.setText(formatFloatToString(currentSteps));
+        timerTextView.setText(formatFloatToString(currentDistance) + DISTANCE_UNIT);
 
         mSensorManager.registerListener(
                 mStepDetector,
@@ -248,7 +256,7 @@ public class HomeFragment extends Fragment {
                             currentDistance += mCurrentLocation.distanceTo(location);
                         }
                         mCurrentLocation = location;
-                        distanceTextView.setText(Float.toString(currentDistance));
+                        distanceTextView.setText(formatFloatToString(currentDistance));
                         Log.d(TAG, "onLocationChanged: " + currentDistance + " meters.");
                     }
                 });
@@ -270,6 +278,11 @@ public class HomeFragment extends Fragment {
         } else {
             Log.d(TAG, "shareButtonHandler: Intent handler does not exist.");
         }
+    }
+
+    private String formatFloatToString(float unformattedFloat) {
+        DecimalFormat df = new DecimalFormat("###.##");
+        return df.format(unformattedFloat) + DISTANCE_UNIT;
     }
 
     @Override
