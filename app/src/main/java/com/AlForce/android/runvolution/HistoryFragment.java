@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,10 @@ public class HistoryFragment extends Fragment {
 
         historyView = (RecyclerView) getView().findViewById(R.id.historyView);
         historyView.setHasFixedSize(true);
+        int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) + 10, getResources().getDisplayMetrics());
+        historyView.setPadding(horizontalMargin, topMargin, horizontalMargin, verticalMargin);
         historyView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         historyViewAdapter = new HistoryAdapter(getContext(), dbHelper);
