@@ -2,10 +2,14 @@ package com.AlForce.android.runvolution;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -34,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -47,11 +53,13 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
     private static final String TAG_TOTAL_DISTANCE = "totalDistance";
+    private static final String LINE_TEXT_SCHEME = "line://msg/text/?";
 
     private TextView nameView;
     private TextView welcomeView;
-    public Button timerButton;
-    public TextView timerTextView;
+    private ImageButton shareButton;
+    private Button timerButton;
+    private TextView timerTextView;
     private TextView distanceTextView;
     private TextView stepTextView;
     private TextView totalDistanceTextView;
@@ -111,6 +119,7 @@ public class HomeFragment extends Fragment {
         scrollView.setPadding(horizontalMargin, topMargin, horizontalMargin, verticalMargin);
         welcomeView = (TextView) getView().findViewById(R.id.welcomeMessage);
         nameView = (TextView) getView().findViewById(R.id.welcomeMessage_user);
+        shareButton = (ImageButton) getView().findViewById(R.id.distanceShareButton);
         timerButton = (Button) getView().findViewById(R.id.timerButton);
         timerTextView = (TextView) getView().findViewById(R.id.timerView);
         distanceTextView = (TextView) getView().findViewById(R.id.distanceView);
@@ -134,6 +143,13 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        shareButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareButtonHandler(v);
+            }
+        });
+
         SharedPreferences preferences = this.getActivity().getSharedPreferences(getString(R.string.sharedpref_file), MODE_PRIVATE);
         String name = preferences.getString("name",null);
         if (name != null) {
@@ -238,6 +254,22 @@ public class HomeFragment extends Fragment {
                 });
         Log.d(TAG, "initializeLocationService: initialized.");
         Log.d(TAG, "initializeLocationService: " + mLocationService.isConnected());
+    }
+
+    public void shareButtonHandler(View view) {
+        String message = getString(R.string.shareMessage) + totalDistance
+                + getString(R.string.distanceUnit);
+        Uri lineMessage = Uri.parse(LINE_TEXT_SCHEME + message);
+        Intent lineIntent = new Intent(Intent.ACTION_VIEW, lineMessage);
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        List<ResolveInfo> activities = packageManager.queryIntentActivities(lineIntent, PackageManager.MATCH_DEFAULT_ONLY);
+        if (activities.size() > 0) {
+            startActivity(lineIntent);
+            Log.d(TAG, "shareButtonHandler: Intent handler exists.");
+        } else {
+            Log.d(TAG, "shareButtonHandler: Intent handler does not exist.");
+        }
     }
 
     @Override

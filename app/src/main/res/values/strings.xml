@@ -114,4 +114,6 @@
     <string name="pref_header_pet">Pet</string>
     <string name="pref_pet_name">Pet Name</string>
     <string name="action_save">Save</string>
+    <string name="shareMessage">I\'m using RunVolution and have run\u0020</string>
+    <string name="distanceUnit">\u0020meters</string>
 </resources>
