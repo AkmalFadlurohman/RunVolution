@@ -65,10 +65,6 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setDbHelper(DatabaseOpenHelper dbHelper) {
-        this.dbHelper = dbHelper;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -82,22 +78,6 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-    private void initializeStepCounter() {
-        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        mStepDetector = new StepDetector();
-        mStepDetector.setOnStepListener(new StepDetector.OnStepListener() {
-            @Override
-            public void onStep(int count) {
-                currentSteps = count;
-                if (stepTextView != null) {
-                    stepTextView.setText(Integer.toString(count));
-                }
-                Log.d(TAG, "onStep: " + currentSteps + " steps");
-            }
-        });
     }
 
     @Override
@@ -132,12 +112,24 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        if (savedInstanceState == null) {
-            totalDistance = statistics.getTotalDistance();
-        } else {
-            totalDistance = savedInstanceState.getFloat(TAG_TOTAL_DISTANCE);
-        }
+        totalDistance = statistics.getTotalDistance();
         totalDistanceTextView.setText(Float.toString(totalDistance));
+    }
+
+    private void initializeStepCounter() {
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        mStepDetector = new StepDetector();
+        mStepDetector.setOnStepListener(new StepDetector.OnStepListener() {
+            @Override
+            public void onStep(int count) {
+                currentSteps = count;
+                if (stepTextView != null) {
+                    stepTextView.setText(Integer.toString(count));
+                }
+                Log.d(TAG, "onStep: " + currentSteps + " steps");
+            }
+        });
     }
 
     private void initializeHistoryAccess() {

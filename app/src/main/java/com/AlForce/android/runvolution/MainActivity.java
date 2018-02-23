@@ -89,12 +89,6 @@ public class MainActivity extends AppCompatActivity {
                 mShakeDetector,
                 mAccelerometer,
                 SensorManager.SENSOR_DELAY_UI);
-
-        if (dbHelper == null){
-            Log.e(TAG, "onResume: null DBHelper");
-        }
-        mHomeFragment.setDbHelper(dbHelper);
-        mHistoryFragment.setDbHelper(dbHelper);
     }
 
     @Override
@@ -151,9 +145,7 @@ public class MainActivity extends AppCompatActivity {
     private void loadAllFragments() {
         fragmentManager = getSupportFragmentManager();
         mHomeFragment = new HomeFragment();
-//        mHomeFragment.setDbHelper(dbHelper);
         mHistoryFragment = new HistoryFragment();
-//        mHistoryFragment.setDbHelper(dbHelper);
         mPetFragment = new PetStatusFragment();
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
