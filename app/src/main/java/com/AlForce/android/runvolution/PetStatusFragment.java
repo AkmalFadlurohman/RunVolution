@@ -52,12 +52,12 @@ public class PetStatusFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        TextView petNameView = (TextView) view.findViewById(R.id.pet_name);
-        TextView petLevelView = (TextView) view.findViewById(R.id.pet_level);
-        TextView petXPView = (TextView) view.findViewById(R.id.pet_xp);
-        petNameView.setText(petNameView.getText().toString() + " " + petName);
-        petLevelView.setText(petLevelView.getText().toString() + " " +  String.format("%d", petLevel));
-        petXPView.setText(petXPView.getText().toString() +  " " +  String.format("%d",petXP));
+        TextView petNameView = (TextView) view.findViewById(R.id.data_pet_name);
+        TextView petLevelView = (TextView) view.findViewById(R.id.data_pet_level);
+        TextView petXPView = (TextView) view.findViewById(R.id.data_pet_xp);
+        petNameView.setText(petName);
+        petLevelView.setText(String.format("%d", petLevel));
+        petXPView.setText(String.format("%d",petXP));
 
     }
 }
