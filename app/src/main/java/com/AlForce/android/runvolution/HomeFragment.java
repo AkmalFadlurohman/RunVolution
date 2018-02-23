@@ -1,6 +1,7 @@
 package com.AlForce.android.runvolution;
 
 
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.AlForce.android.runvolution.history.HistoryDAO;
 import com.AlForce.android.runvolution.history.HistoryItem;
 import com.AlForce.android.runvolution.history.HistoryStatistics;
+import com.AlForce.android.runvolution.location.LocationService;
 import com.AlForce.android.runvolution.timer.Timer;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
@@ -28,6 +30,8 @@ import java.util.Date;
 public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
+    private static final String TAG_TOTAL_DISTANCE = "totalDistance";
+
     public Button timerButton;
     public TextView timerTextView;
     private TextView distanceTextView;
@@ -44,6 +48,10 @@ public class HomeFragment extends Fragment {
     private float currentDistance;
     private int currentSteps;
 
+    /* Location Service Variables */
+    private LocationService mLocationService;
+    private Location mCurrentLocation;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -52,11 +60,38 @@ public class HomeFragment extends Fragment {
         this.dbHelper = dbHelper;
     }
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+//        initializeHistoryAccess();
+//        if (LocationService.isGooglePlayServicesAvailable(getContext())){
+//            initializeLocationService();
+//        } else {
+//            getActivity().finish();
+//        }
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        initializeHistoryAccess();
+        if (LocationService.isGooglePlayServicesAvailable(getContext())){
+            initializeLocationService();
+        } else {
+            getActivity().finish();
+        }
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putFloat(TAG_TOTAL_DISTANCE, totalDistance);
     }
 
     @Override
@@ -69,8 +104,6 @@ public class HomeFragment extends Fragment {
         stepTextView = (TextView) getView().findViewById(R.id.stepCounterView);
         totalDistanceTextView = (TextView) getView().findViewById(R.id.totalDistanceView);
 
-        initializeHistoryAccess();
-
         timer = new Timer(timerTextView);
         timerButton.setText("START");
         timerButton.setOnClickListener(new View.OnClickListener() {
@@ -78,14 +111,21 @@ public class HomeFragment extends Fragment {
             public void onClick(View view) {
                 Button button = (Button) view;
                 if (button.getText().equals("STOP")) {
-                    startRecording();
+                    stopRecording();
                     button.setText("START");
                 } else {
-                    stopRecording();
+                    startRecording();
                     button.setText("STOP");
                 }
             }
         });
+
+        if (savedInstanceState == null) {
+            totalDistance = statistics.getTotalDistance();
+        } else {
+            totalDistance = savedInstanceState.getFloat(TAG_TOTAL_DISTANCE);
+        }
+        totalDistanceTextView.setText(Float.toString(totalDistance));
     }
 
     private void initializeHistoryAccess() {
@@ -100,19 +140,27 @@ public class HomeFragment extends Fragment {
         };
         historyDAO.setListener(updateListener);
 
-        totalDistance = statistics.getTotalDistance();
-        totalDistanceTextView.setText(Float.toString(totalDistance));
     }
 
     private void startRecording() {
         currentDistance = 0;
         currentSteps = 0;
-        timer.timerHandler.removeCallbacks(timer.timerRunnable);
+
+        if (mLocationService != null) {
+            mLocationService.startLocationUpdates();
+        }
+        timer.startTime = System.currentTimeMillis();
+        timer.timerHandler.postDelayed(timer.timerRunnable, 0);
     }
 
     private void stopRecording() {
-        timer.startTime = System.currentTimeMillis();
-        timer.timerHandler.postDelayed(timer.timerRunnable, 0);
+        if (mLocationService != null) {
+            if (mLocationService.isConnected()) {
+                mLocationService.stopLocationUpdates();
+            }
+        }
+
+        timer.timerHandler.removeCallbacks(timer.timerRunnable);
         saveCurrentRecord();
     }
 
@@ -126,11 +174,25 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "saveCurrentRecord: Created item with id="+newId);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        timer.timerHandler.removeCallbacks(timer.timerRunnable);
-        Button button = (Button) getView().findViewById(R.id.timerButton);
-        button.setText("START");
+    private void initializeLocationService() {
+        mLocationService = new LocationService(getContext());
+        mLocationService.setLocationServiceListener(
+                new LocationService.LocationServiceListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        if (mCurrentLocation == null) {
+                            currentDistance = 0;
+                        } else {
+                            currentDistance += mCurrentLocation.distanceTo(location);
+                        }
+                        mCurrentLocation = location;
+                        distanceTextView.setText(Float.toString(currentDistance));
+                        Log.d(TAG, "onLocationChanged: " + currentDistance + " meters.");
+                    }
+                }
+        );
+        Log.d(TAG, "initializeLocationService: initialized.");
+        Log.d(TAG, "initializeLocationService: " + mLocationService.isConnected());
     }
+
 }
