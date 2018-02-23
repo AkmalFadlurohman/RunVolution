@@ -177,7 +177,7 @@ public class HomeFragment extends Fragment {
             public void onStep(int count) {
                 currentSteps++;
                 if (stepTextView != null) {
-                    stepTextView.setText(Integer.toString(count));
+                    stepTextView.setText(Integer.toString(currentSteps));
                 }
                 Log.d(TAG, "onStep: " + currentSteps + " steps");
             }
