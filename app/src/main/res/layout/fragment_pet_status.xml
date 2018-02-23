@@ -33,7 +33,7 @@
                     android:padding="1dp"
                     android:paddingStart="15dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="45sp"
+                    android:textSize="@dimen/pet_title"
                     android:typeface="normal" />
 
                 <TextView
@@ -45,9 +45,8 @@
                     android:layout_alignStart="@id/title_pet_name"
                     android:layout_marginStart="35dp"
                     android:fontFamily="monospace"
-                    android:text="Bobby"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/pet_data"
                     android:typeface="normal" />
 
             </RelativeLayout>
@@ -71,7 +70,7 @@
                     android:padding="1dp"
                     android:paddingStart="15dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="45sp"
+                    android:textSize="@dimen/pet_title"
                     android:typeface="normal" />
 
                 <TextView
@@ -83,9 +82,8 @@
                     android:layout_alignStart="@id/title_pet_name"
                     android:layout_marginStart="35dp"
                     android:fontFamily="monospace"
-                    android:text="1"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/pet_data"
                     android:typeface="normal" />
 
             </RelativeLayout>
@@ -109,7 +107,7 @@
                     android:padding="1dp"
                     android:paddingStart="15dp"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="45sp"
+                    android:textSize="@dimen/pet_title"
                     android:typeface="normal" />
 
                 <TextView
@@ -121,9 +119,8 @@
                     android:layout_alignStart="@id/title_pet_name"
                     android:layout_marginStart="35dp"
                     android:fontFamily="monospace"
-                    android:text="0"
                     android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                    android:textSize="35sp"
+                    android:textSize="@dimen/pet_data"
                     android:typeface="normal" />
 
             </RelativeLayout>
