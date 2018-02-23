@@ -63,7 +63,6 @@ public class LocationService implements LocationListener,
                     .addOnConnectionFailedListener(this)
                     .build();
         }
-        mGoogleApiClient.connect();
     }
 
     public void setLocationServiceListener(LocationServiceListener listener) {
@@ -97,10 +96,10 @@ public class LocationService implements LocationListener,
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "onConnected: " + mGoogleApiClient.isConnected());
-        startLocationUpdates();
+        updateLocation();
     }
 
-    public void startLocationUpdates() {
+    private void updateLocation() {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -108,14 +107,20 @@ public class LocationService implements LocationListener,
 
             ActivityCompat.requestPermissions((Activity) context,
                     new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-                    Manifest.permission.ACCESS_FINE_LOCATION},
+                            Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
 
         } else {
             PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                     mGoogleApiClient, mLocationRequest, this);
-            Log.d(TAG, "startLocationUpdates: Location update started.");
+            Log.d(TAG, "updateLocation: Updating location.");
         }
+    }
+
+    public void startLocationUpdates() {
+        buildGoogleClient();
+        mGoogleApiClient.connect();
+        Log.d(TAG, "startLocationUpdates: Location update started.");
     }
 
     @Override
