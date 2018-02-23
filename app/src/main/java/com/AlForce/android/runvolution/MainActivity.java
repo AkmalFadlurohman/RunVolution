@@ -41,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
 
-    /* Location Service Variables */
-    private LocationService mLocationService;
-    private float mTotalDistance;
-    private Location mCurrentLocation;
+//    /* Location Service Variables */
+//    private LocationService mLocationService;
+//    private float mTotalDistance;
+//    private Location mCurrentLocation;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,16 +64,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         initializeShakeDetector();
-        if (LocationService.isGooglePlayServicesAvailable(this)){
-            initializeLocationService();
-        } else {
-            finish();
-        }
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -104,31 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 mAccelerometer,
                 SensorManager.SENSOR_DELAY_UI);
 
-        // TODO: This should be moved to start-running button implementation.
-        if (mLocationService != null) {
-            mLocationService.buildGoogleClient();
-            if (mLocationService.isConnected()) {
-                mLocationService.startLocationUpdates();
-            }
-        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         mSensorManager.unregisterListener(mShakeDetector);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        // TODO: This should be moved to stop-running button implementation.
-        if (mLocationService != null) {
-            if (mLocationService.isConnected()) {
-                mLocationService.stopLocationUpdates();
-            }
-        }
     }
 
     private void initializeShakeDetector() {
@@ -155,25 +126,6 @@ public class MainActivity extends AppCompatActivity {
         return listener;
     }
 
-    private void initializeLocationService() {
-        mLocationService = new LocationService(this);
-        mLocationService.setLocationServiceListener(
-                new LocationService.LocationServiceListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        if (mCurrentLocation == null) {
-                            mTotalDistance = 0;
-                        } else {
-                            mTotalDistance += mCurrentLocation.distanceTo(location);
-                        }
-                        mCurrentLocation = location;
-                        Log.d(TAG, "onLocationChanged: " + mTotalDistance + " meters.");
-                    }
-                }
-        );
-        Log.d(TAG, "initializeLocationService: initialized.");
-        Log.d(TAG, "initializeLocationService: " + mLocationService.isConnected());
-    }
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
