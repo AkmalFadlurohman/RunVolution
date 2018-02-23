@@ -73,18 +73,18 @@ public class HomeFragment extends Fragment {
     private HistoryStatistics statistics;
     private HistoryDAO historyDAO;
 
-    private float totalDistance;
-    private float currentDistance;
-    private int currentSteps;
-
     /* Location Service Variables */
     private LocationService mLocationService;
     private Location mCurrentLocation;
+    private float totalDistance;
+    private float currentDistance;
 
     /* Step Counter Variables */
     private SensorManager mSensorManager;
     private Sensor mStepCounter;
     private StepDetector mStepDetector;
+    private int currentSteps;
+    private int cumulativeSteps;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -174,7 +174,7 @@ public class HomeFragment extends Fragment {
         mStepDetector.setOnStepListener(new StepDetector.OnStepListener() {
             @Override
             public void onStep(int count) {
-                currentSteps = count;
+                currentSteps++;
                 if (stepTextView != null) {
                     stepTextView.setText(Integer.toString(count));
                 }
@@ -205,7 +205,7 @@ public class HomeFragment extends Fragment {
         currentDistance = 0;
         currentSteps = 0;
         timerTextView.setText(formatFloatToString(currentSteps));
-        timerTextView.setText(formatFloatToString(currentDistance) + DISTANCE_UNIT);
+        timerTextView.setText(formatFloatToString(currentDistance));
 
         mSensorManager.registerListener(
                 mStepDetector,
