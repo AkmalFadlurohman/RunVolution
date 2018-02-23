@@ -41,10 +41,6 @@ public class MainActivity extends AppCompatActivity {
     private Sensor mAccelerometer;
     private ShakeDetector mShakeDetector;
 
-//    /* Location Service Variables */
-//    private LocationService mLocationService;
-//    private float mTotalDistance;
-//    private Location mCurrentLocation;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {

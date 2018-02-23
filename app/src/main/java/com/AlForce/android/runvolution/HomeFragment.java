@@ -60,20 +60,6 @@ public class HomeFragment extends Fragment {
         this.dbHelper = dbHelper;
     }
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-//        initializeHistoryAccess();
-//        if (LocationService.isGooglePlayServicesAvailable(getContext())){
-//            initializeLocationService();
-//        } else {
-//            getActivity().finish();
-//        }
-
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
