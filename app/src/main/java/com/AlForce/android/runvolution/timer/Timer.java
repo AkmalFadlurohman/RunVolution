@@ -14,6 +14,7 @@ import org.w3c.dom.Text;
 public class Timer {
     public TextView timerTextView;
     public long startTime = 0;
+    public long millis;
 
     public Timer(TextView timerTextView) {
         this.timerTextView = timerTextView;
@@ -24,7 +25,7 @@ public class Timer {
     public Runnable timerRunnable = new Runnable() {
         @Override
         public void run() {
-            long millis = System.currentTimeMillis() - startTime;
+            millis = System.currentTimeMillis() - startTime;
             int seconds = (int) (millis / 1000);
             int minutes = seconds / 60;
             seconds = seconds % 60;

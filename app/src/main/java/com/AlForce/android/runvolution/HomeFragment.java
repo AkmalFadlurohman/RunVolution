@@ -55,6 +55,10 @@ public class HomeFragment extends Fragment {
 
     private static final String TAG = HomeFragment.class.getSimpleName();
     private static final String TAG_TOTAL_DISTANCE = "totalDistance";
+    private static final String TAG_BUTTON_TEXT = "button";
+    private static final String TAG_STEP = "step";
+    private static final String TAG_DISTANCE = "distance";
+    private static final String TAG_TIMER = "timer";
     private static final String LINE_TEXT_SCHEME = "line://msg/text/?";
     private static final String DISTANCE_UNIT = " m";
 
@@ -109,6 +113,10 @@ public class HomeFragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putFloat(TAG_TOTAL_DISTANCE, totalDistance);
+        outState.putInt(TAG_STEP, currentSteps);
+        outState.putFloat(TAG_DISTANCE, currentDistance);
+        outState.putCharSequence(TAG_BUTTON_TEXT, timerButton.getText());
+        outState.putLong(TAG_TIMER, timer.millis);
     }
 
     @Override
@@ -131,7 +139,6 @@ public class HomeFragment extends Fragment {
         initializeHistoryAccess();
 
         timer = new Timer(timerTextView);
-        timerButton.setText("START");
         timerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -160,6 +167,21 @@ public class HomeFragment extends Fragment {
                 nameView.setText(nickName);
             }
         }
+
+        if (savedInstanceState != null) {
+            int step = savedInstanceState.getInt(TAG_STEP);
+            float distance = savedInstanceState.getFloat(TAG_DISTANCE);
+            long millis = savedInstanceState.getLong(TAG_TIMER);
+
+            timerButton.setText(savedInstanceState.getCharSequence(TAG_BUTTON_TEXT));
+            stepTextView.setText(Integer.toString(step));
+            distanceTextView.setText(formatFloatToString(distance));
+            timer.startTime = millis;
+            timer.timerHandler.postDelayed(timer.timerRunnable, 0);
+        } else {
+            timerButton.setText("START");
+        }
+
         totalDistance = statistics.getTotalDistance();
         totalDistanceTextView.setText(formatFloatToString(totalDistance));
     }
@@ -204,8 +226,8 @@ public class HomeFragment extends Fragment {
     private void startRecording() {
         currentDistance = 0;
         currentSteps = 0;
-        timerTextView.setText(formatFloatToString(currentSteps));
-        timerTextView.setText(formatFloatToString(currentDistance));
+        stepTextView.setText(formatFloatToString(currentSteps));
+        distanceTextView.setText(formatFloatToString(currentDistance));
 
         mSensorManager.registerListener(
                 mStepDetector,
@@ -282,14 +304,6 @@ public class HomeFragment extends Fragment {
     private String formatFloatToString(float unformattedFloat) {
         DecimalFormat df = new DecimalFormat("###.##");
         return df.format(unformattedFloat) + DISTANCE_UNIT;
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        timer.timerHandler.removeCallbacks(timer.timerRunnable);
-        Button button = (Button) getView().findViewById(R.id.timerButton);
-        button.setText("START");
     }
 
     public static class RecordUpdaterTask extends AsyncTask<Void, Void, Boolean> {
