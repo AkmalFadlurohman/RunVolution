@@ -42,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/boder_box_bottom"
                 android:orientation="horizontal">
 
                 <TextView
@@ -64,13 +65,11 @@
                     android:textAppearance="@style/TextAppearance.AppCompat.Headline"
                     android:textSize="24sp" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/distanceShareButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="5"
-                    android:background="@color/colorPrimaryDark"
-                    android:text="Share" />
+                    android:background="@drawable/share_button" />
             </LinearLayout>
 
             <TextView
