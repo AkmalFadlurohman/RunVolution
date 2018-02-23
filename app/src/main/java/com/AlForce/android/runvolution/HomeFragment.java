@@ -1,6 +1,9 @@
 package com.AlForce.android.runvolution;
 
 
+import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +20,7 @@ import com.AlForce.android.runvolution.history.HistoryDAO;
 import com.AlForce.android.runvolution.history.HistoryItem;
 import com.AlForce.android.runvolution.history.HistoryStatistics;
 import com.AlForce.android.runvolution.location.LocationService;
+import com.AlForce.android.runvolution.sensor.StepDetector;
 import com.AlForce.android.runvolution.timer.Timer;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
 import com.AlForce.android.runvolution.utils.DatabaseUpdateListener;
@@ -52,6 +56,11 @@ public class HomeFragment extends Fragment {
     private LocationService mLocationService;
     private Location mCurrentLocation;
 
+    /* Step Counter Variables */
+    private SensorManager mSensorManager;
+    private Sensor mStepCounter;
+    private StepDetector mStepDetector;
+
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -64,6 +73,7 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         initializeHistoryAccess();
+        initializeStepCounter();
         if (LocationService.isGooglePlayServicesAvailable(getContext())){
             initializeLocationService();
         } else {
@@ -72,6 +82,22 @@ public class HomeFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false);
+    }
+
+    private void initializeStepCounter() {
+        mSensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mStepCounter = mSensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+        mStepDetector = new StepDetector();
+        mStepDetector.setOnStepListener(new StepDetector.OnStepListener() {
+            @Override
+            public void onStep(int count) {
+                currentSteps = count;
+                if (stepTextView != null) {
+                    stepTextView.setText(Integer.toString(count));
+                }
+                Log.d(TAG, "onStep: " + currentSteps + " steps");
+            }
+        });
     }
 
     @Override
@@ -115,6 +141,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void initializeHistoryAccess() {
+        dbHelper = new DatabaseOpenHelper(getContext());
         historyDAO = new HistoryDAO(dbHelper);
         statistics = new HistoryStatistics(historyDAO);
         updateListener = new DatabaseUpdateListener() {
@@ -132,6 +159,12 @@ public class HomeFragment extends Fragment {
         currentDistance = 0;
         currentSteps = 0;
 
+        mSensorManager.registerListener(
+                mStepDetector,
+                mStepCounter,
+                SensorManager.SENSOR_DELAY_UI
+        );
+
         if (mLocationService != null) {
             mLocationService.startLocationUpdates();
         }
@@ -145,6 +178,8 @@ public class HomeFragment extends Fragment {
                 mLocationService.stopLocationUpdates();
             }
         }
+
+        mSensorManager.unregisterListener(mStepDetector);
 
         timer.timerHandler.removeCallbacks(timer.timerRunnable);
         saveCurrentRecord();

@@ -47,6 +47,8 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        dbHelper = new DatabaseOpenHelper(getContext());
+
         historyView = (RecyclerView) getView().findViewById(R.id.historyView);
         historyView.setHasFixedSize(true);
         historyView.setLayoutManager(new LinearLayoutManager(getActivity()));
