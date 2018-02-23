@@ -31,14 +31,13 @@ public class HistoryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public DatabaseOpenHelper getDbHelper() {
-        return dbHelper;
+    public void setDbHelper(DatabaseOpenHelper dbHelper) {
+        this.dbHelper = dbHelper;
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        dbHelper = new DatabaseOpenHelper(getContext());
 
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_history, container, false);

@@ -12,21 +12,28 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.AlForce.android.runvolution.location.LocationService;
 import com.AlForce.android.runvolution.sensor.ShakeDetector;
 import com.AlForce.android.runvolution.utils.DatabaseOpenHelper;
-import com.AlForce.android.runvolution.utils.FragmentFactory;
 
 public class MainActivity extends AppCompatActivity {
-    Bundle bundle;
 
     public static final String TAG = MainActivity.class.getSimpleName();
+    public static final String TAG_FRAGMENT_HOME = "home";
+    public static final String TAG_FRAGMENT_HISTORY = "history";
+    public static final String TAG_FRAGMENT_PET = "pet";
 
-    private DatabaseOpenHelper dbHelper;
     private FragmentManager fragmentManager;
+    private DatabaseOpenHelper dbHelper;
+
+    /* Fragments */
+    private HomeFragment mHomeFragment;
+    private HistoryFragment mHistoryFragment;
+    private PetStatusFragment mPetFragment;
 
     /* Shake Detection Variables */
     private SensorManager mSensorManager;
@@ -42,19 +49,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbHelper = new DatabaseOpenHelper(this);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 
-        fragmentManager = getSupportFragmentManager();
+        dbHelper = new DatabaseOpenHelper(this);
+        loadAllFragments();
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        Intent intent = getIntent();
-        String userData = intent.getStringExtra("userData");
-        String petData = intent.getStringExtra("petData");
-        bundle = new Bundle();
-        bundle.putString("userData", userData);
-        bundle.putString("petData", petData);
-        loadFragment(FragmentFactory.TAG_FRAGMENT_HOME, bundle);
+        if (savedInstanceState == null) {
+            showFragment(TAG_FRAGMENT_HOME);
+        }
 
         initializeShakeDetector();
         if (LocationService.isGooglePlayServicesAvailable(this)){
@@ -67,6 +73,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.action_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_setting:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                // Do nothing
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -155,36 +181,47 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HOME, bundle);
+                    showFragment(TAG_FRAGMENT_HOME);
                     return true;
                 case R.id.navigation_history:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_HISTORY, bundle);
+                    showFragment(TAG_FRAGMENT_HISTORY);
                     return true;
                 case R.id.navigation_notifications:
-                    loadFragment(FragmentFactory.TAG_FRAGMENT_PET, bundle);
+                    showFragment(TAG_FRAGMENT_PET);
                     return true;
             }
             return false;
         }
     };
 
-    private void loadFragment(String fragmentTag, Bundle data) {
+    private void loadAllFragments() {
+        fragmentManager = getSupportFragmentManager();
+        mHomeFragment = new HomeFragment();
+        mHomeFragment.setDbHelper(dbHelper);
+        mHistoryFragment = new HistoryFragment();
+        mHistoryFragment.setDbHelper(dbHelper);
+        mPetFragment = new PetStatusFragment();
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.add(R.id.container, mPetFragment, TAG_FRAGMENT_PET);
+        transaction.hide(mPetFragment);
+        transaction.add(R.id.container, mHistoryFragment, TAG_FRAGMENT_HISTORY);
+        transaction.hide(mHistoryFragment);
+        transaction.add(R.id.container, mHomeFragment, TAG_FRAGMENT_HOME);
+        transaction.hide(mHomeFragment);
+        transaction.commitNow();
+    }
+
+    private void showFragment(String fragmentTag) {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         for (Fragment fr : fragmentManager.getFragments()) {
             if (!fr.getTag().equals(fragmentTag)) {
-                fragmentTransaction.detach(fr);
+                fragmentTransaction.hide(fr);
             }
         }
 
         Fragment fragment = fragmentManager.findFragmentByTag(fragmentTag);
-
-        if (fragment == null) {
-            fragment = FragmentFactory.createFragment(fragmentTag,data);
-            fragmentTransaction.add(R.id.container, fragment, fragmentTag);
-        } else {
-            fragmentTransaction.attach(fragment);
-        }
-
+        fragmentTransaction.show(fragment);
         fragmentTransaction.commit();
     }
 
