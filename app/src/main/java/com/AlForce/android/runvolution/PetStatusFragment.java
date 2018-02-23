@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.AlForce.android.runvolution.R;
@@ -52,6 +54,11 @@ public class PetStatusFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        ScrollView scrollView = (ScrollView) view.findViewById(R.id.pet_scroll_view);
+        int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
+        int bottomMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) + 10, getResources().getDisplayMetrics());
+        scrollView.setPadding(horizontalMargin, verticalMargin, horizontalMargin, bottomMargin);
         TextView petNameView = (TextView) view.findViewById(R.id.data_pet_name);
         TextView petLevelView = (TextView) view.findViewById(R.id.data_pet_level);
         TextView petXPView = (TextView) view.findViewById(R.id.data_pet_xp);

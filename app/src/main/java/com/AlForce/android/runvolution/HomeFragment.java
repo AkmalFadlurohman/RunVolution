@@ -117,9 +117,8 @@ public class HomeFragment extends Fragment {
 
         ScrollView scrollView = (ScrollView) getView().findViewById(R.id.home_scroll_view);
         int horizontalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics());
-        int topMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) + 10, getResources().getDisplayMetrics());
-        scrollView.setPadding(horizontalMargin, topMargin, horizontalMargin, verticalMargin);
+        int verticalMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (int) getResources().getDimension(R.dimen.activity_vertical_margin) + 10, getResources().getDisplayMetrics());
+        scrollView.setPadding(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
         welcomeView = (TextView) getView().findViewById(R.id.welcomeMessage);
         nameView = (TextView) getView().findViewById(R.id.welcomeMessage_user);
         shareButton = (ImageButton) getView().findViewById(R.id.distanceShareButton);
